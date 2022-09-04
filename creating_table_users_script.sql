@@ -1,9 +1,8 @@
 drop table users;
 CREATE TABLE users (
-  
-  devtodevid(uid)
-  lasttime(int_ts)
-  pushavailable(boolean)
+  devtodevid uid,
+  lasttime int_ts,
+  pushavailable boolean,
   publisherid int,
   publisher text,
   campaign text,
@@ -46,6 +45,7 @@ CREATE TABLE users (
   ab text,
   testinggroup text
   );
+  
 COPY users(
   candidate_id,
   hire_reported,
