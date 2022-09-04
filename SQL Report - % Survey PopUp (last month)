@@ -1,0 +1,20 @@
+/*
+/*
+SQL Report - % Survey PopUp (last month)
+*/
+
+declare
+@install_interval interval = '6 month';
+
+select round(avg(d.OpenLink*100/m.SurveyPopUp), 2) as "Survey PopUp"
+from (select to_char(eventtime, 'yyyy-mm') monts, count(distinct devtodevid) as OpenLink
+      from p106255."_SurveyPopup"
+      where eventtime>=current_date - @install_interval and eventtime < current_date
+      and "_Type"='OpenLink'
+      group by 1
+     ) d cross join
+     (select count(distinct devtodevid) as SurveyPopUp
+      from p106255."_SurveyPopup"
+      where eventtime>=current_date - @install_interval and eventtime < current_date
+     ) m
+order by 1
