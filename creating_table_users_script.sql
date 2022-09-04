@@ -13,7 +13,7 @@ CREATE TABLE users (
   country TEXT,
   devicemanufacturer TEXT,
   devicename TEXT,
-  crossplatformuserid INT,
+  crossplatformuserid TEXT,
   channel TEXT,
   installsource TEXT,
   useragent TEXT,
