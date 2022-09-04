@@ -1,0 +1,52 @@
+/*
+/*
+SQL Report - Main Metrics Union (last 3 month)
+https://www.devtodev.com/education/articles/ru/425/sql-dlya-nachinayushtih-osnovnie-metriki-neskolykih-prilozheniy
+*/
+declare 
+@date_from date = '2021-10-12',
+@install_interval interval = '3 month',
+@payments_count int = 2,
+@itemlike text = 'offer%',
+@item_list text[] = '{"offer1", "offer2", "special offer"}';
+ 
+select 'New users' as "Metric"
+, count(distinct devtodevid) as "Total"
+from p106255.users
+where created > current_date - @install_interval and created < current_date
+ 
+union all
+select 'Paying users'
+, count(distinct devtodevid)
+from p106255.payments
+where created > current_date - @install_interval and created < current_date
+ 
+union all
+select 'Users paid ' || @payments_count || ' and more times'
+, count(distinct devtodevid)
+from p106255.payments
+where created > current_date - @install_interval and created < current_date and paymentcount >=@payments_count
+
+union all
+select 'Gross'
+, round(sum(priceusd)::float, 2)
+from p106255.payments
+where created > current_date - @install_interval and created < current_date
+
+union all
+select 'DAU'
+, count(distinct devtodevid)
+from p106255.sessions
+where created > current_date - interval '1 day'
+
+union all
+select 'WAU'
+, count(distinct devtodevid)
+from p106255.sessions
+where created > current_date - interval '7 day'
+
+union all
+select 'MAU'
+, count(distinct devtodevid)
+from p106255.sessions
+where created > current_date - interval '30 day'
