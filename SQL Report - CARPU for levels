@@ -1,0 +1,83 @@
+/*
+/*
+SQL Report - CARPU for levels
+*/
+
+with 
+  user_data as (
+    select 
+      devtodevid
+      , created::date AS install_date
+      , generate_series AS level
+      , level AS max_level
+    from 
+      p106255.users, generate_series(1, level)
+    where 
+      not tester 
+      and not cheater
+      and country not in ('UA')
+  ),
+
+  rev as (
+    select main.level
+      , max_level
+      , count(distinct main.devtodevid) AS users
+      , SUM(priceusd) AS revenue
+    from 
+      user_data as main
+    left join
+      p106255.payments
+      on 
+        main.devtodevid = payments.devtodevid
+        AND main.level = payments.level
+    where 
+      install_date between @start_date and @finish_date
+    group by 
+      1, 2
+    order by 
+      1 asc
+  ),
+  
+  crev_table AS (
+    select level
+      , users
+      , revenue
+      , sum(revenue) OVER (order by level) AS crev
+    from
+      rev
+  ),
+  
+  carpu_table AS (
+    select level
+      , round(SUM(users), 2) AS users
+      , round(SUM(revenue), 2) AS rev
+      , round(median(crev), 2) AS crev
+    from
+      crev_table
+    group by
+      1
+    order by 1
+  ),
+  
+  added_table_1 as (
+    select  level
+    , max(users) over() as started_users
+    , users
+    , rev
+    , crev
+    from carpu_table
+  ),
+  
+    added_table_2 as (
+    select  level
+    --, started_users
+    , users
+    , rev
+    , crev
+    , round(crev/started_users, 2) AS carpu
+    from added_table_1
+  )
+
+select *
+from added_table_2
+order by 1
