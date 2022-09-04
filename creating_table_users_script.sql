@@ -61,5 +61,5 @@ COPY users(
   adgroup,
   ad,
   abtestgroups
-  ) FROM '/Users/mykras/Documents/stepico_create_table_data/Users.csv'
+  ) FROM '/Users/mykras/Downloads/stepico_create_table_data/Users.csv'
 DELIMITER ';' CSV HEADER;
