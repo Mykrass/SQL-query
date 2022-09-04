@@ -1,0 +1,28 @@
+/*
+/*
+SQL Report - ARPU by levels
+*/
+
+with user_data as (
+    select devtodevid
+    from p106255.users
+    where not tester 
+    and not cheater
+    and country not in ('UA')
+  ),
+
+  arpu as (
+  select level as "Level"
+      , round(sum(priceusd)/count(distinct devtodevid), 2) as "ARPPU"
+      --, to_char(sum(p.priceusd)/count(distinct devtodevid), '$999,999,999,999.00') as "ARPPU"
+      --, '$'||round((sum(p.priceusd)/count(distinct devtodevid))::numeric,2)|| ' per paying user' as "ARPPU"
+  from user_data
+  join p106255.payments
+  using (devtodevid)
+  where eventtime between @start_date and @finish_date
+  group by 1
+  )
+  
+select *
+from arpu
+order by 1
