@@ -1,0 +1,70 @@
+/*
+/*
+ARPU by quest
+*/
+
+with user_data as (
+    select devtodevid
+    from p106255.users
+    where not tester 
+    and not cheater
+    and country not in ('UA')
+  ),
+
+  quests as (
+    select devtodevid
+       , eventtime
+       , "_QuestId"
+       , "_State"
+    from p106255."_Quests" as main
+    inner join user_data
+    using (devtodevid)
+    where eventtime between @start_date and @finish_date
+    and "_State" in ('QuestReceived', 'QuestCompleted')
+    and tester is not true
+    and cheater is not true
+  ),
+  
+  quest_norm as (
+    select devtodevid
+      , eventtime
+      , "_QuestId"
+      , case
+        when "_State" = 'QuestReceived' then eventtime else null end as start_time
+      , case
+        when "_State" = 'QuestCompleted' then eventtime else null end as end_time
+    from quests
+  ),
+  
+  quest_norm2 as (
+    select devtodevid
+      , "_QuestId"
+      , max(eventtime) as eventtime
+      , max(start_time) as start_time
+      , max(end_time) as end_time
+    from quest_norm
+    group by 1,2
+  ),
+  
+  filter_null as ( select *
+    from quest_norm2
+    where start_time is not null and end_time is not null
+  ),
+
+  arpu as (
+    select f."_QuestId"
+        , round(sum(p.priceusd)/count(distinct p.devtodevid), 2) as "ARPPU"
+        , count(distinct p.devtodevid) AS users
+        --, to_char(sum(p.priceusd)/count(distinct devtodevid), '$999,999,999,999.00') as "ARPPU"
+        --, '$'||round((sum(p.priceusd)/count(distinct devtodevid))::numeric,2)|| ' per paying user' as "ARPPU"
+    from filter_null f
+    join p106255.payments p
+      using (devtodevid)
+    where f.eventtime between @start_date and @finish_date
+      and p.eventtime between start_time and end_time
+    group by 1
+  )
+  
+select *
+from arpu
+order by 1
