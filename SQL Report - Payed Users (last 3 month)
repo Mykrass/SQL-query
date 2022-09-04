@@ -1,0 +1,17 @@
+/*
+/*
+SQL Report - Payed Users (last 3 month)
+*/
+
+select distinct devtodevid
+, eventtime
+, country
+--, currency
+, round(priceusd, 2) as "price usd"
+--, last_value(paymentsum) over(partition by lastpaymentdate)
+, product
+from p106255.payments
+where price > (select avg(paymentsum) from p106255.users)
+and eventtime > current_date - interval '3 month'
+and tester is false
+order by 1
