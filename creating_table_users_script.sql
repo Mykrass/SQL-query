@@ -4,57 +4,47 @@ CREATE TABLE users (
   devtodevid(uid)
   lasttime(int_ts)
   pushavailable(boolean)
-  publisherid INT,
-  publisher TEXT,
-  campaign TEXT,
-  placement TEXT,
-  ad TEXT,
+  publisherid int,
+  publisher text,
+  campaign text,
+  placement text,
+  ad text,
   appversion(version)
-  appversionid INT,
+  appversionid int,
   cheater(boolean)
-  country TEXT,
+  country text,
   created(int_ts)
-  device TEXT,
-  deviceid INT,
+  device text,
+  deviceid int,
   firstappversion(version)
-  firstappversionid INT,
+  firstappversionid int,
   firstpaymentdate(int_ts)
   lastpaymentdate(int_ts)
-  level INT,
-  locale TEXT,
+  level int,
+  locale text,
   osversion(version)
-  osversionid INT,
-  paymentcount INT,
+  osversionid int,
+  paymentcount int,
   paymentsum(float)
   sdkversion(version)
-  sdkversionid INT,
+  sdkversionid int,
   segmentvalues(segments)
   tester(boolean)
-  mainid TEXT,
-  customuid TEXT,
-  idfa TEXT,
-  idfv TEXT,
-  advertisingid TEXT,
-  androidid TEXT,
-  username TEXT,
-  email TEXT,
-  phone TEXT,
-  photo TEXT,
-  age INT,
-  timezoneoffset INT,
-  gender TEXT,
-  _A/B test groups TEXT,
-  _Testing Group TEXT
-  
-  candidate_id INT,
-  hire_reported TEXT,
-  primary_keyword_candidate TEXT,
-  candidates_city TEXT,
-  candidates_country TEXT,
-  experience_years FLOAT,
-  en_level_candidate TEXT,
-  hire_salary FLOAT,
-  company_type TEXT
+  mainid text,
+  customuid text,
+  idfa text,
+  idfv text,
+  advertisingid text,
+  androidid text,
+  username text,
+  email text,
+  phone text,
+  photo text,
+  age int,
+  timezoneoffset int,
+  gender int,
+  ab text,
+  testinggroup text
   );
 COPY users(
   candidate_id,
