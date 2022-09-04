@@ -1,0 +1,16 @@
+/*
+SQL Report - KPIs Daily ARPDAU (last 3 month)
+https://github.com/deltaDNA/sql-cookbook
+
+--ARPDAU, Average Revenue Per Daily Active User
+--specifically for currencies with an exponent of 2.
+*/
+
+select to_char(eventtime, 'yyyy-mm-dd') as "Days",
+round((sum(paymentsum)/100/count(distinct devtodevid))::float, 2) as "ARPDAU"
+from p106255.payments
+where eventtime between current_date -90 and current_date
+and tester is False
+and cheater is False
+group by 1
+order by 1 asc;
