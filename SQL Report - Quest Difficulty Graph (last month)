@@ -1,0 +1,37 @@
+/*
+/*
+SQL Report - Quest Difficulty Graph (last month)
+*/
+
+declare 
+--@date_from date = '2021-10-12',
+@install_interval interval = '1 month';
+
+select *
+, round(a."Quest Completed"::numeric/a."Quest Accepted"::numeric * 100, 2) AS "% Quest Completed/Accepted"
+, round((1 - a."Quest Completed"::numeric/a."Quest Accepted"::numeric)*100, 2) AS "% No Quest Completed/Accepted"
+from
+(SELECT
+    "_QuestId" as "Quest Id"
+    ,COUNT (
+        CASE WHEN eventtime > current_date - @install_interval and eventtime < current_date
+                  AND "_State" in ('QuestReceived')
+                  AND "_State" IS NOT NULL
+            THEN 1 ELSE NULL END ) 
+        AS "Quest Received" 
+    ,COUNT (
+        CASE WHEN eventtime > current_date - @install_interval and eventtime < current_date
+                  AND "_State" in ('QuestAccepted')
+                  AND "_State" IS NOT NULL
+            THEN 1 ELSE NULL END ) 
+        AS "Quest Accepted" 
+    ,COUNT (
+        CASE WHEN eventtime > current_date - @install_interval and eventtime < current_date
+                  AND "_State" in ('QuestCompleted')
+                  AND "_State" IS NOT NULL
+            THEN 1 ELSE NULL END ) 
+        AS "Quest Completed" 
+FROM
+    p106255."_Quests"
+GROUP BY 1) a
+ORDER BY 1
