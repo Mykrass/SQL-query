@@ -1,0 +1,26 @@
+/*
+/*
+SQL Report - KPIs retention_by_country (last week)
+https://github.com/deltaDNA/sql-cookbook/blob/master/KPIs/retention_by_country.sql
+*/
+
+with retention_data as (
+	select
+		country as "Country"
+		, count(distinct devtodevid) as "Installs"
+		, count(distinct case when eventtime::date-created::date = 7 then devtodevid end) as "Retained D7" 
+	from p106255.sessions
+	where country is not null
+	and cheater is False
+	and tester is False
+	and created < current_date -7
+	group by country
+)
+select "Country"
+, "Installs"
+--, "Retained D7"
+, round(("Retained D7"::float/"Installs")::float, 2) as "D7 Retention"
+from retention_data
+where "Installs">1
+order by 3 desc
+limit 9
