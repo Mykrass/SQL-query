@@ -23,7 +23,6 @@ CREATE TABLE users (
   androidid text,
   adcampaign text,
   timezoneoffset text,
-  osversion text,
   segments text,
   placement text,
   site text,
@@ -33,7 +32,7 @@ CREATE TABLE users (
   );
   
 COPY users(
-  devtodevid int,
+    devtodevid int,
   mainid text,
   created timestamptz,
   paying bool,
@@ -56,7 +55,6 @@ COPY users(
   androidid text,
   adcampaign text,
   timezoneoffset text,
-  osversion text,
   segments text,
   placement text,
   site text,
