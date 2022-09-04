@@ -2,10 +2,11 @@ drop table users;
 CREATE TABLE users (
   devtodevid INT,
   mainid TEXT,
-  created timestamptz,
+  created TEXT,
   paying bool,
   cheater bool,
   tester bool,
+  level INT,
   appversion TEXT,
   firstappversion TEXT,
   language TEXT,
@@ -31,13 +32,14 @@ CREATE TABLE users (
   abtestgroups TEXT
   );
   
-COPY users(
+\COPY users(
   devtodevid,
   mainid,
   created,
   paying,
   cheater,
   tester,
+  level,
   appversion,
   firstappversion,
   language,
