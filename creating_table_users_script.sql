@@ -32,7 +32,7 @@ CREATE TABLE users (
   );
   
 COPY users(
-    devtodevid int,
+  devtodevid int,
   mainid text,
   created timestamptz,
   paying bool,
@@ -61,5 +61,5 @@ COPY users(
   adgroup text,
   ad text,
   abtestgroups text
-  ) FROM '/Users/mykras/Downloads/raw_data_avgust_04/Users.csv'
-DELIMITER ',' CSV HEADER;
+  ) FROM '/Users/mykras/Documents/stepico_create_table_data/Users.csv'
+DELIMITER ';' CSV HEADER;
