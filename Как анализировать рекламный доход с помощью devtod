@@ -1,0 +1,31 @@
+/*
+/*
+Как анализировать рекламный доход с помощью devtod
+https://www.youtube.com/watch?v=T5PHsnsdBk0&t=1874sev
+*/
+select level
+, round(100 :: numeric*"1 ads viewed" / last_value("all ads viewed") over(order by level), 2) as "1 ads viewed"
+, round(100 :: numeric*"2 ads viewed" / last_value("all ads viewed") over(order by level), 2) as "2 ads viewed"
+, round(100 :: numeric*"3-5 ads viewed" / last_value("all ads viewed") over(order by level), 2) as "3-5 ads viewed"
+, round(100 :: numeric*"6+ ads viewed" / last_value("all ads viewed") over(order by level), 2) as "6+ ads viewed"
+--, round(100 :: numeric*"all ads viewed" / first_value("all ads viewed") over(order by level), 2) as "all ads viewed"
+from(
+  select level
+  , count(distinct devtodevid) filter(where cnt=1) as "1 ads viewed"
+  , count(distinct devtodevid) filter(where cnt=2) as "2 ads viewed"
+  , count(distinct devtodevid) filter(where cnt>2 and cnt<6) as "3-5 ads viewed"
+  , count(distinct devtodevid) filter(where cnt>5 and cnt<11) as "6+ ads viewed"
+  , count(distinct devtodevid) filter(where cnt>0 and cnt<11) as "all ads viewed"
+  from(
+  select devtodevid, cnt, level
+  from p106255.levelups
+  left join(
+  select devtodevid, count() cnt
+  from p106255.ad_impressions
+  where created >= current_date - interval '3 month'
+  group by 1) t1 using(devtodevid)
+  )t2
+  where level < 9
+  group by 1
+  order by 1
+)t3
