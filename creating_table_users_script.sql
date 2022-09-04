@@ -1,34 +1,34 @@
 drop table users;
 CREATE TABLE users (
-  devtodevid uid,
-  lasttime int_ts,
+  devtodevid int,
+  lasttime text,
   pushavailable boolean,
   publisherid int,
   publisher text,
   campaign text,
   placement text,
   ad text,
-  appversion(version)
+  appversion text,
   appversionid int,
-  cheater(boolean)
+  cheater boolean,
   country text,
-  created(int_ts)
+  created text,
   device text,
   deviceid int,
-  firstappversion(version)
+  firstappversion text,
   firstappversionid int,
-  firstpaymentdate(int_ts)
-  lastpaymentdate(int_ts)
+  firstpaymentdate text,
+  lastpaymentdate text,
   level int,
   locale text,
-  osversion(version)
+  osversion text,
   osversionid int,
   paymentcount int,
-  paymentsum(float)
-  sdkversion(version)
+  paymentsum float,
+  sdkversion text,
   sdkversionid int,
-  segmentvalues(segments)
-  tester(boolean)
+  segmentvalues text,
+  tester boolean,
   mainid text,
   customuid text,
   idfa text,
