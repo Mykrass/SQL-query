@@ -1,0 +1,71 @@
+/*
+/*
+SQL Report - CARPU on day after install
+*/
+with 
+  user_data as (
+    select 
+      devtodevid,
+      created::date AS install_date,
+      generate_series AS day_from_install
+    from 
+      p106255.users, generate_series(0, current_date - created::date)
+    where 
+      not tester 
+      and not cheater
+      and country not in ('UA')
+      and generate_series < current_date - @finish_date
+  ),
+
+  rev as (
+    select 
+      install_date,
+      day_from_install,
+      count(distinct main.devtodevid) AS users,
+      SUM(priceusd) AS revenue
+    from 
+      user_data as main
+    left join
+      p106255.payments
+      on 
+        main.devtodevid = payments.devtodevid
+        AND day_from_install = payments.eventtime::date - payments.created::date
+    where 
+      install_date between @start_date and @finish_date
+    group by 
+      1, 2
+    order by 
+      1 asc
+  ),
+  
+  crev_table AS (
+    select
+      day_from_install,
+      install_date,
+      users,
+      revenue,
+      sum(CASE 
+            WHEN current_date - install_date > day_from_install
+            THEN revenue
+            ELSE 0
+          END) OVER (PARTITION BY install_date ORDER BY day_from_install) AS crev
+    from
+      rev
+  ),
+  
+  carpu_table AS (
+    select
+      day_from_install,
+      round(SUM(crev)/SUM(users), 2) AS carpu,
+      round(SUM(crev), 2) AS crev,
+      round(SUM(users), 2) AS users,
+      round(SUM(revenue), 2) AS rev
+    from
+      crev_table
+    group by
+      1
+  )
+
+select *
+from carpu_table
+order by 1
