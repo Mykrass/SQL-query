@@ -1,0 +1,84 @@
+/*
+/*
+SQL Report - CARPU by quest
+*/
+
+with user_data as (
+    select devtodevid
+    , created::date AS install_date
+    from p106255.users
+    where not tester 
+    and not cheater
+    and country not in ('UA')
+  ),
+
+  user_quests as (
+    select u.devtodevid
+       , q.eventtime
+       , u.install_date
+       , "_QuestId"
+       , "_State"
+    from p106255."_Quests" as q
+    join user_data as u
+      using (devtodevid)
+    where eventtime between @start_date and @finish_date
+    and "_State" in ('QuestAccepted', 'QuestCompleted')
+    and tester is not true
+    and cheater is not true
+  ),
+
+  user_quests_norm as (
+    select devtodevid
+      , eventtime
+      , install_date
+      , "_QuestId"
+      , case
+        when "_State" = 'QuestAccepted' then eventtime else null end as start_time
+      , case
+        when "_State" = 'QuestCompleted' then eventtime else null end as end_time
+    from user_quests
+  ),
+  
+  user_quest_agg as (
+    select devtodevid
+      , "_QuestId"
+      , max(install_date) as install_date
+      , max(eventtime) as eventtime
+      , max(start_time) as start_time
+      , max(end_time) as end_time
+    from user_quests_norm
+    group by 1,2
+  ),
+  
+  user_quest_agg_filter_null as ( 
+    select *
+    from user_quest_agg
+    where start_time is not null and end_time is not null
+  ),
+  
+  rev_during_quests as (
+    select q."_QuestId" as "QuestId"
+      , count(distinct q.devtodevid) AS users
+      , round(sum(p.priceusd), 2) as revenue
+    from user_quest_agg_filter_null q
+    left join p106255.payments p
+      on 
+        q.devtodevid = p.devtodevid
+      and p.eventtime <= end_time
+    group by 1
+    order by 1
+  ),
+
+  carpu_table as (
+    select  "QuestId"
+    , users as "users"
+    , max(users) over() as "started_users"
+    , revenue as "revenue"
+    , round(revenue/users, 2) As "quest_carpu"
+    , round(revenue/max(users) over(), 2) AS "carpu"
+    from rev_during_quests
+  )
+  
+select *
+from carpu_table
+order by 1
