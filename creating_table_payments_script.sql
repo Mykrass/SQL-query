@@ -1,5 +1,5 @@
 drop table payments;
-create table payments(
+create table payments (
 devtodevid int,
 date text,
 level int,
