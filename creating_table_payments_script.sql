@@ -3,7 +3,7 @@ create table payments (
 devtodevid int,
 date text,
 level int,
-transaction_id int,
+transaction_id text,
 transaction_name text,
 amount_in_usd float,
 status int,
