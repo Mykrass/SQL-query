@@ -12,3 +12,18 @@ tester bool,
 cheat bool,
 appversion text
 );
+
+\COPY payments(
+devtodevid,
+date,
+level,
+transaction_id,
+transaction_name,
+amount_in_usd,
+status,
+created,
+tester,
+cheat,
+appversion
+  ) FROM '/Users/mykras/Downloads/stepico_create_table_data/Payments.csv'
+DELIMITER ';' CSV HEADER;
