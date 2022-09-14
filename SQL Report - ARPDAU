@@ -13,19 +13,34 @@ with daily_revenue as (
     eventtime::date as dt,
     round(sum(priceusd), 2) as rev
   from p106255.payments
-  where eventtime::date between @start_date and @finish_date
-  group by 1
+  where 
+    eventtime::date between @start_date and @finish_date
+  and 
+    not tester 
+  and 
+    not cheater
+  and 
+    country not in ('UA')
+  group by 
+    1
 ),
 daily_players as (
   select
     eventtime::date as dt,
     count(distinct devtodevid) as players
-  from p106255.sessions
-  group by 1
+  from 
+    p106255.sessions
+  group by 
+    1
 )
 select
-  daily_revenue.dt as "DATE",
-  round(daily_revenue.rev / daily_players.players, 3) as "ARPU"
-from daily_revenue
-    join daily_players using (dt)
-order by 1;
+    daily_revenue.dt as "DATE",
+    round(daily_revenue.rev / daily_players.players, 3) as "ARPU"
+  from 
+    daily_revenue
+  join 
+    daily_players 
+  using 
+    (dt)
+  order by 
+    1;
