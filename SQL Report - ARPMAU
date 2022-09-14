@@ -25,6 +25,7 @@ with daily_revenue as (
   group by 
     1
 ),
+
 daily_players as (
   select
     to_char(eventtime, 'yyyy-mm') as dt,
@@ -33,8 +34,10 @@ daily_players as (
     p106255.sessions
   group by 
     1
-)
-select
+),
+
+arpu as (
+  select
     daily_revenue.dt as "DATE",
     round(daily_revenue.rev / daily_players.players, 3) as "ARPU"
   from 
@@ -43,5 +46,11 @@ select
     daily_players 
   using 
     (dt)
+  )
+
+select * 
+  from 
+    arpu
   order by 
-    1;
+    1
+;
