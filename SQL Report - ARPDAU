@@ -1,20 +1,21 @@
 /*
 /*
-SQL Report - ARPDAU
+SQL Report - ARPMAU
 https://www.carrotquest.io/blog/arpu/
 */
 
-declare
-@start_date date = '2022-09-01',
-@finish_date date = '2022-09-12';
+--declare
+--@start_date date = '2022-09-01',
+--@finish_date date = '2022-09-14';
 
 with daily_revenue as (
   select
-    eventtime::date as dt,
+    to_char(eventtime, 'yyyy-mm-dd') as dt,
     round(sum(priceusd), 2) as rev
   from p106255.payments
   where 
-    eventtime::date between @start_date and @finish_date
+    --eventtime::date between @start_date and @finish_date
+    eventtime >= current_date - interval '7 day' and eventtime < current_date
   and 
     not tester 
   and 
@@ -24,16 +25,19 @@ with daily_revenue as (
   group by 
     1
 ),
+
 daily_players as (
   select
-    eventtime::date as dt,
+    to_char(eventtime, 'yyyy-mm-dd') as dt,
     count(distinct devtodevid) as players
   from 
     p106255.sessions
   group by 
     1
-)
-select
+),
+
+arpu as (
+  select
     daily_revenue.dt as "DATE",
     round(daily_revenue.rev / daily_players.players, 3) as "ARPU"
   from 
@@ -42,5 +46,11 @@ select
     daily_players 
   using 
     (dt)
+  )
+
+select * 
+  from 
+    arpu
   order by 
-    1;
+    1
+;
