@@ -99,3 +99,71 @@ ALTER TABLE Payments ALTER COLUMN install_date TYPE DATE USING to_timestamp(inst
 
   
   
+drop table Users;
+CREATE TABLE Users (
+devtodev_id int,
+main_id text,
+created text,
+paying bool,
+cheater bool,
+isTester bool,
+level int,
+app_version text,
+first_app_version text,
+language text,
+country text,
+device_manufacturer text,
+device_name text,
+crossplatform_user_id int,
+channel text,
+user_agent text,
+screen_resolution text,
+os_version text,
+advertising_id text,
+udid text,
+android_id text,
+ad_campaign text,
+time_zone_offset text,
+segments text,
+placement text,
+site text,
+ad_group text,
+testing_group text);
+  
+\COPY Users(
+devtodev_id,
+main_id,
+created,
+paying,
+cheater,
+isTester,
+level,
+app_version,
+first_app_version,
+language,
+country,
+device_manufacturer,
+device_name,
+crossplatform_user_id,
+channel,
+user_agent,
+screen_resolution,
+os_version,
+advertising_id,
+udid,
+android_id,
+ad_campaign,
+time_zone_offset,
+segments,
+placement,
+site,
+ad_group,
+testing_group
+  ) FROM '/Users/mykras/Downloads/StepicoDB_Summer/csv_to_db/Users.csv'
+DELIMITER ';' CSV HEADER;
+
+ALTER TABLE Users ALTER COLUMN created TYPE DATE USING to_timestamp(created);
+
+
+
+
