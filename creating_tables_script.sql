@@ -1,7 +1,7 @@
 drop table AdImpression;
 create table AdImpression (
 devtodev_id int,
-date text,
+date int,
 level int,
 placement text,
 network text,
