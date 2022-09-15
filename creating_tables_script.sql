@@ -34,3 +34,36 @@ ALTER TABLE AdImpression ALTER COLUMN install_date TYPE DATE USING to_timestamp(
 --ALTER TABLE AdImpression ALTER COLUMN install_date TYPE TIMESTAMP WITH TIME ZONE USING install_date::timestamptz;
 
 
+
+drop table GameSessions;
+create table GameSessions (
+devtodev_id int,
+time int,
+count int,
+avg_duration int,
+isTester bool,
+cheat bool,
+level int,
+install_date int,
+app_version text);
+
+\COPY GameSessions (
+devtodev_id,
+time,
+count,
+avg_duration,
+isTester,
+cheat,
+level,
+install_date,
+app_version
+  ) FROM '/Users/mykras/Downloads/StepicoDB_Summer/csv_to_db/GameSessions.csv'
+DELIMITER ';' CSV HEADER;
+
+ALTER TABLE GameSessions ALTER COLUMN time TYPE DATE USING to_timestamp(time);
+ALTER TABLE GameSessions ALTER COLUMN install_date TYPE DATE USING to_timestamp(install_date);
+
+
+
+
+  
