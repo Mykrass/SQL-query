@@ -103,7 +103,7 @@ drop table Users;
 CREATE TABLE Users (
 devtodev_id int,
 main_id text,
-created text,
+created int,
 paying bool,
 cheater bool,
 isTester bool,
