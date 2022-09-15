@@ -26,7 +26,7 @@ install_date,
 isTester,
 cheat,
 app_version
-  ) FROM '/Users/mykras/Downloads/StepicoDB_Summer/csv_to_db/AdImpression.csv '
+  ) FROM '/Users/mykras/Downloads/StepicoDB_Summer/csv_to_db/AdImpression.csv'
 DELIMITER ';' CSV HEADER;
 
 
