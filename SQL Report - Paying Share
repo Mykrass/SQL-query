@@ -1,0 +1,85 @@
+/*
+/*
+SQL Report - Paying Share
+Paying Share = ARPU/ARPPU
+https://www.carrotquest.io/blog/arpu/
+*/
+
+--declare
+--@start_date date = '2022-08-16',
+--@finish_date date = '2022-09-16';
+
+with daily_revenue as (
+  select
+    to_char(eventtime, 'yyyy-mm-dd') as dt,
+    count() as payed_users,
+    round(sum(priceusd), 2) as rev
+  from p106255.payments
+  where 
+    --eventtime::date between @start_date and @finish_date
+    eventtime >= current_date - interval '30 day' and eventtime < current_date
+  and 
+    not tester 
+  and 
+    not cheater
+  and 
+    country not in ('UA')
+  group by 
+    1
+),
+
+arppu as (
+  select 
+    dt,
+    round(daily_revenue.rev / daily_revenue.payed_users, 2) as "ARPPU"
+  from daily_revenue
+  order by 1
+),
+
+daily_players as (
+  select
+    to_char(eventtime, 'yyyy-mm-dd') as dt
+    , count(distinct devtodevid) as players
+  from 
+    p106255.sessions
+  where 
+    --eventtime::date between @start_date and @finish_date
+    eventtime >= current_date - interval '30 day' and eventtime < current_date
+  and 
+    not tester 
+  and 
+    not cheater
+  and 
+    country not in ('UA')
+  group by 
+    1
+),
+
+arpu as (
+  select
+    daily_revenue.dt as dt,
+    round(daily_revenue.rev / daily_players.players, 3) as "ARPU"
+  from 
+    daily_revenue
+  join 
+    daily_players 
+  using 
+    (dt)
+  ),
+
+paying_share as(
+  select round(100 * median("ARPU") / median("ARPPU"), 3) as "PAYING SHARE, %"
+   from 
+    arpu
+  join 
+    arppu 
+  using 
+    (dt)
+)
+
+select * 
+  from 
+    paying_share
+  order by 
+    1
+;
