@@ -11,13 +11,13 @@ https://www.carrotquest.io/blog/arpu/
 
 with daily_revenue as (
   select
-    to_char(eventtime, 'yyyy-mm-dd') as dt,
+    to_char(created, 'yyyy-mm') as dt,
     count() as payed_users,
     round(sum(priceusd), 2) as rev
   from p106255.payments
   where 
     --eventtime::date between @start_date and @finish_date
-    eventtime >= current_date - interval '30 day' and eventtime < current_date
+    created >= current_date - interval '30 day' and created < current_date
   and 
     not tester 
   and 
@@ -38,13 +38,13 @@ arppu as (
 
 daily_players as (
   select
-    to_char(eventtime, 'yyyy-mm-dd') as dt
+    to_char(created, 'yyyy-mm') as dt
     , count(distinct devtodevid) as players
   from 
     p106255.sessions
   where 
     --eventtime::date between @start_date and @finish_date
-    eventtime >= current_date - interval '30 day' and eventtime < current_date
+    created >= current_date - interval '30 day' and created < current_date
   and 
     not tester 
   and 
@@ -68,7 +68,7 @@ arpu as (
   ),
 
 paying_share as(
-  select round(100 * median("ARPU") / median("ARPPU"), 3) as "PAYING SHARE, %"
+  select round(100 * median("ARPU") / median("ARPPU"), 2) as "PAYING SHARE, %"
    from 
     arpu
   join 
