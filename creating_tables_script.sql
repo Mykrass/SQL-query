@@ -166,4 +166,45 @@ ALTER TABLE Users ALTER COLUMN created TYPE DATE USING to_timestamp(created);
 
 
 
+drop table Quests;
+CREATE TABLE Quests (
+devtodev_id int,
+time int,
+level int,
+isTester bool,
+cheat bool,
+install_date int,
+app_version text,
+State text,
+QuestId int,
+Quest_Name text,
+PlayerGold int,
+PlayerExperience int,
+PlayerGems int,
+PlayerEnergy int,
+PlayerLevel int);
+
+\COPY Quests(
+devtodev_id,
+time,
+level,
+isTester,
+cheat,
+install_date,
+app_version,
+State,
+QuestId,
+Quest_Name,
+PlayerGold,
+PlayerExperience,
+PlayerGems,
+PlayerEnergy,
+PlayerLevel
+  ) FROM '/Users/mykras/Downloads/StepicoDB_Summer/csv_to_db/Quests.csv'
+DELIMITER ';' CSV HEADER;
+
+ALTER TABLE Quests ALTER COLUMN time TYPE DATE USING to_timestamp(time);
+ALTER TABLE Quests ALTER COLUMN install_date TYPE DATE USING to_timestamp(install_date);
+
+
 
