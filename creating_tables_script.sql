@@ -208,3 +208,28 @@ ALTER TABLE Quests ALTER COLUMN install_date TYPE DATE USING to_timestamp(instal
 
 
 
+drop table Tutor;
+CREATE TABLE Tutor (
+devtodev_id int,
+time int,
+level int,
+complete_state int,
+isTester bool,
+cheat bool,
+install_date int,
+app_version text);
+
+\COPY Tutor (
+devtodev_id,
+time,
+level,
+complete_state,
+isTester,
+cheat,
+install_date,
+app_version
+) FROM '/Users/mykras/Downloads/StepicoDB_Summer/csv_to_db/Tutor.csv'
+DELIMITER ';' CSV HEADER;
+
+ALTER TABLE Tutor ALTER COLUMN time TYPE DATE USING to_timestamp(time);
+ALTER TABLE Tutor ALTER COLUMN install_date TYPE DATE USING to_timestamp(install_date);
