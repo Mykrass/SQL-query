@@ -31,6 +31,8 @@ DELIMITER ';' CSV HEADER;
 
 --ALTER TABLE AdImpression ALTER COLUMN date TYPE DATE USING to_timestamp(date);
 --ALTER TABLE AdImpression ALTER COLUMN install_date TYPE DATE USING to_timestamp(install_date);
+ALTER TABLE AdImpression ALTER COLUMN date TYPE timestamptz USING to_timestamp(date);
+ALTER TABLE AdImpression ALTER COLUMN install_date TYPE timestamptz USING to_timestamp(install_date);
 
 
 
@@ -61,6 +63,8 @@ DELIMITER ';' CSV HEADER;
 
 --ALTER TABLE GameSessions ALTER COLUMN time TYPE DATE USING to_timestamp(time);
 --ALTER TABLE GameSessions ALTER COLUMN install_date TYPE DATE USING to_timestamp(install_date);
+ALTER TABLE GameSessions ALTER COLUMN time TYPE timestamptz USING to_timestamp(time);
+ALTER TABLE GameSessions ALTER COLUMN install_date TYPE timestamptz USING to_timestamp(install_date);
 
 
 
@@ -96,6 +100,8 @@ DELIMITER ';' CSV HEADER;
   
 --ALTER TABLE Payments ALTER COLUMN date TYPE DATE USING to_timestamp(date);
 --ALTER TABLE Payments ALTER COLUMN install_date TYPE DATE USING to_timestamp(install_date);
+ALTER TABLE Payments ALTER COLUMN date TYPE timestamptz USING to_timestamp(date);
+ALTER TABLE Payments ALTER COLUMN install_date TYPE timestamptz USING to_timestamp(install_date);
 
   
   
@@ -163,7 +169,7 @@ testing_group
 DELIMITER ';' CSV HEADER;
 
 --ALTER TABLE Users ALTER COLUMN created TYPE DATE USING to_timestamp(created);
-
+ALTER TABLE Users ALTER COLUMN created TYPE timestamptz USING to_timestamp(created);
 
 
 drop table Quests;
@@ -205,7 +211,8 @@ DELIMITER ';' CSV HEADER;
 
 --ALTER TABLE Quests ALTER COLUMN time TYPE DATE USING to_timestamp(time);
 --ALTER TABLE Quests ALTER COLUMN install_date TYPE DATE USING to_timestamp(install_date);
-
+ALTER TABLE Quests ALTER COLUMN time TYPE timestamptz USING to_timestamp(time);
+ALTER TABLE Quests ALTER COLUMN install_date TYPE timestamptz USING to_timestamp(install_date);
 
 
 drop table Tutor;
@@ -233,3 +240,5 @@ DELIMITER ';' CSV HEADER;
 
 --ALTER TABLE Tutor ALTER COLUMN time TYPE DATE USING to_timestamp(time);
 --ALTER TABLE Tutor ALTER COLUMN install_date TYPE DATE USING to_timestamp(install_date);
+ALTER TABLE Tutor ALTER COLUMN time TYPE timestamptz USING to_timestamp(time);
+ALTER TABLE Tutor ALTER COLUMN install_date TYPE timestamptz USING to_timestamp(install_date);
