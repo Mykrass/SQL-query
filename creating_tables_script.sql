@@ -29,8 +29,8 @@ app_version
   ) FROM '/Users/mykras/Downloads/StepicoDB_Summer/csv_to_db/AdImpression.csv'
 DELIMITER ';' CSV HEADER;
 
-ALTER TABLE AdImpression ALTER COLUMN date TYPE DATE USING to_timestamp(date);
-ALTER TABLE AdImpression ALTER COLUMN install_date TYPE DATE USING to_timestamp(install_date);
+--ALTER TABLE AdImpression ALTER COLUMN date TYPE DATE USING to_timestamp(date);
+--ALTER TABLE AdImpression ALTER COLUMN install_date TYPE DATE USING to_timestamp(install_date);
 
 
 
@@ -59,8 +59,8 @@ app_version
   ) FROM '/Users/mykras/Downloads/StepicoDB_Summer/csv_to_db/GameSessions.csv'
 DELIMITER ';' CSV HEADER;
 
-ALTER TABLE GameSessions ALTER COLUMN time TYPE DATE USING to_timestamp(time);
-ALTER TABLE GameSessions ALTER COLUMN install_date TYPE DATE USING to_timestamp(install_date);
+--ALTER TABLE GameSessions ALTER COLUMN time TYPE DATE USING to_timestamp(time);
+--ALTER TABLE GameSessions ALTER COLUMN install_date TYPE DATE USING to_timestamp(install_date);
 
 
 
@@ -94,8 +94,8 @@ app_version
   ) FROM '/Users/mykras/Downloads/StepicoDB_Summer/csv_to_db/Payments.csv'
 DELIMITER ';' CSV HEADER;
   
-ALTER TABLE Payments ALTER COLUMN date TYPE DATE USING to_timestamp(date);
-ALTER TABLE Payments ALTER COLUMN install_date TYPE DATE USING to_timestamp(install_date);
+--ALTER TABLE Payments ALTER COLUMN date TYPE DATE USING to_timestamp(date);
+--ALTER TABLE Payments ALTER COLUMN install_date TYPE DATE USING to_timestamp(install_date);
 
   
   
@@ -162,7 +162,7 @@ testing_group
   ) FROM '/Users/mykras/Downloads/StepicoDB_Summer/csv_to_db/Users.csv'
 DELIMITER ';' CSV HEADER;
 
-ALTER TABLE Users ALTER COLUMN created TYPE DATE USING to_timestamp(created);
+--ALTER TABLE Users ALTER COLUMN created TYPE DATE USING to_timestamp(created);
 
 
 
@@ -203,8 +203,8 @@ PlayerLevel
   ) FROM '/Users/mykras/Downloads/StepicoDB_Summer/csv_to_db/Quests.csv'
 DELIMITER ';' CSV HEADER;
 
-ALTER TABLE Quests ALTER COLUMN time TYPE DATE USING to_timestamp(time);
-ALTER TABLE Quests ALTER COLUMN install_date TYPE DATE USING to_timestamp(install_date);
+--ALTER TABLE Quests ALTER COLUMN time TYPE DATE USING to_timestamp(time);
+--ALTER TABLE Quests ALTER COLUMN install_date TYPE DATE USING to_timestamp(install_date);
 
 
 
@@ -231,5 +231,5 @@ app_version
 ) FROM '/Users/mykras/Downloads/StepicoDB_Summer/csv_to_db/Tutor.csv'
 DELIMITER ';' CSV HEADER;
 
-ALTER TABLE Tutor ALTER COLUMN time TYPE DATE USING to_timestamp(time);
-ALTER TABLE Tutor ALTER COLUMN install_date TYPE DATE USING to_timestamp(install_date);
+--ALTER TABLE Tutor ALTER COLUMN time TYPE DATE USING to_timestamp(time);
+--ALTER TABLE Tutor ALTER COLUMN install_date TYPE DATE USING to_timestamp(install_date);
