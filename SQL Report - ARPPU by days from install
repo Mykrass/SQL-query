@@ -1,7 +1,10 @@
 /*
 /*
-SQL Report - ARPU by days from install
+SQL Report - ARPPU by days from install
 */
+declare
+@start_date date = '2022-06-01',
+@finish_date date = '2022-08-30';
 
 with user_data as (
     select devtodevid
@@ -11,7 +14,7 @@ with user_data as (
     and country not in ('UA')
   ),
 
-  arpu as (
+  arppu as (
   select eventtime::date - created::date as "Days from install"
       , round(sum(priceusd)/count(distinct devtodevid), 2) as "ARPPU"
       --, to_char(sum(p.priceusd)/count(distinct devtodevid), '$999,999,999,999.00') as "ARPPU"
@@ -20,9 +23,11 @@ with user_data as (
   join p106255.payments
   using (devtodevid)
   where eventtime between @start_date and @finish_date
+      --eventtime >= current_date - interval '90 day' and eventtime < current_date
+
   group by 1
   )
   
 select *
-from arpu
+from arppu
 order by 1
