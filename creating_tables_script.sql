@@ -196,6 +196,19 @@ DELIMITER ';' CSV HEADER;
 
 --ALTER TABLE Users ALTER COLUMN created TYPE DATE USING to_timestamp(created);
 ALTER TABLE Users ALTER COLUMN created TYPE timestamptz USING to_timestamp(created);
+ALTER TABLE Users DROP COLUMN install_source, 
+                  DROP COLUMN mac,
+                  DROP COLUMN  odin, 
+                  DROP COLUMN serial, 
+                  DROP COLUMN username, 
+                  DROP COLUMN useremail, 
+                  DROP COLUMN userphoto, 
+                  DROP COLUMN userphone, 
+                  DROP COLUMN os_version_dubl, 
+                  DROP COLUMN agency, 
+                  DROP COLUMN keyword, 
+                  DROP COLUMN ad, 
+                  DROP COLUMN testing_group;
 
 
 drop table Quests;
