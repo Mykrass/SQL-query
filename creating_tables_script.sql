@@ -138,7 +138,7 @@ userphoto text,
 userphone text,
 ad_campaign text,
 time_zone_offset text,
-os_version_dubl 
+os_version_dubl text,
 segments text,
 agency text,
 keyword text,
