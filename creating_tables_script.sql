@@ -281,3 +281,37 @@ DELIMITER ';' CSV HEADER;
 --ALTER TABLE Tutor ALTER COLUMN install_date TYPE DATE USING to_timestamp(install_date);
 ALTER TABLE Tutor ALTER COLUMN time TYPE timestamptz USING to_timestamp(time);
 ALTER TABLE Tutor ALTER COLUMN install_date TYPE timestamptz USING to_timestamp(install_date);
+
+
+
+drop table LevelUp;
+CREATE TABLE LevelUp (
+devtodev_id int,
+time int,
+level int,
+isTester bool,
+cheat bool,
+install_date int,
+app_version text,
+spent text,
+earned text,
+balance text,
+bought text);
+
+\COPY  LevelUp (
+devtodev_id,
+time,
+level,
+isTester,
+cheat,
+install_date,
+app_version,
+spent,
+earned,
+balance,
+bought
+) FROM '/Users/mykras/Downloads/StepicoDB_Summer/csv_to_db/LevelUp.csv'
+DELIMITER ';' CSV HEADER;
+
+ALTER TABLE  LevelUp ALTER COLUMN time TYPE timestamptz USING to_timestamp(time);
+ALTER TABLE  LevelUp ALTER COLUMN install_date TYPE timestamptz USING to_timestamp(install_date);
