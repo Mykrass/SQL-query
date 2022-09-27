@@ -284,7 +284,7 @@ ALTER TABLE Tutor ALTER COLUMN install_date TYPE timestamptz USING to_timestamp(
 
 
 
-drop table LevelUp;
+DROP TABLE LevelUp;
 CREATE TABLE LevelUp (
 devtodev_id int,
 time int,
@@ -315,3 +315,42 @@ DELIMITER ';' CSV HEADER;
 
 ALTER TABLE  LevelUp ALTER COLUMN time TYPE timestamptz USING to_timestamp(time);
 ALTER TABLE  LevelUp ALTER COLUMN install_date TYPE timestamptz USING to_timestamp(install_date);
+
+
+
+DROP TABLE IngamePurchase;
+CREATE TABLE IngamePurchase(
+devtodev_id int,
+time int,
+level int,
+item_type text,
+item text,
+count int,
+cheat bool,
+isTester bool,
+install_date int,
+app_version text,
+_101 float,
+Gold float,
+Energy float,
+Gems float);
+
+\COPY  IngamePurchase (
+devtodev_id,
+time,
+level,
+item_type,
+item,
+count,
+cheat,
+isTester,
+install_date,
+app_version,
+_101,
+Gold,
+Energy,
+Gems
+) FROM '/Users/mykras/Downloads/StepicoDB_Summer/csv_to_db/IngamePurchase.csv'
+DELIMITER ';' CSV HEADER;
+
+ALTER TABLE  IngamePurchase ALTER COLUMN time TYPE timestamptz USING to_timestamp(time);
