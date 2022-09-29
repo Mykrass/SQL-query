@@ -330,9 +330,7 @@ cheat bool,
 isTester bool,
 install_date int,
 app_version text,
-_101 float,
 Gold float,
-Energy float,
 Gems float);
 
 \COPY  IngamePurchase (
@@ -346,12 +344,9 @@ cheat,
 isTester,
 install_date,
 app_version,
-_101,
 Gold,
-Energy,
 Gems
 ) FROM '/Users/mykras/Downloads/StepicoDB_Summer/csv_to_db/IngamePurchase.csv'
 DELIMITER ';' CSV HEADER;
 
 ALTER TABLE  IngamePurchase ALTER COLUMN time TYPE timestamptz USING to_timestamp(time);
-ALTER TABLE IngamePurchase DROP COLUMN _101;
