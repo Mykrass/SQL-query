@@ -354,3 +354,4 @@ Gems
 DELIMITER ';' CSV HEADER;
 
 ALTER TABLE  IngamePurchase ALTER COLUMN time TYPE timestamptz USING to_timestamp(time);
+ALTER TABLE IngamePurchase DROP COLUMN _101;
