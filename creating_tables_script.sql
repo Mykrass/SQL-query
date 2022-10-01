@@ -350,3 +350,33 @@ Gems
 DELIMITER ';' CSV HEADER;
 
 ALTER TABLE  IngamePurchase ALTER COLUMN time TYPE timestamptz USING to_timestamp(time);
+
+
+
+DROP TABLE GameSessions;
+CREATE TABLE GameSessions(
+devtodev_id int,
+time int,
+count int,
+avg_duration int,
+isTester bool,
+cheat bool,
+level int,
+install_date int,
+app_version text);
+
+\COPY  GameSessions(
+devtodev_id,
+time,
+count,
+avg_duration,
+isTester,
+cheat,
+level,
+install_date,
+app_version
+) FROM '/Users/mykras/Downloads/StepicoDB_Summer/csv_to_db/GameSessions.csv'
+DELIMITER ';' CSV HEADER;
+
+ALTER TABLE  GameSessions ALTER COLUMN time TYPE timestamptz USING to_timestamp(time);
+ALTER TABLE  GameSessions ALTER COLUMN install_date TYPE timestamptz USING to_timestamp(install_date);
