@@ -380,3 +380,71 @@ DELIMITER ';' CSV HEADER;
 
 ALTER TABLE  GameSessions ALTER COLUMN time TYPE timestamptz USING to_timestamp(time);
 ALTER TABLE  GameSessions ALTER COLUMN install_date TYPE timestamptz USING to_timestamp(install_date);
+
+
+
+DROP TABLE Orders;
+CREATE TABLE Orders(
+devtodev_id int,
+time int,
+level int,
+isTester bool,
+cheat bool,
+install_date int,
+app_version text,
+Requirement_1_ID int,
+Reward_1_Count int,
+Requirement_1_Count int,
+Reward_3_ID int,
+IsOrderSpecial bool, 
+Reward_1_ID int,
+Reward_3_Count int,
+State text,
+Reward_2_ID int,
+Reward_2_Count int, 
+Requirement_2_Count int,
+Requirement_2_ID int, 
+Requirement_3_Count int,
+Requirement_3_ID int,
+PlayerGems int,
+PlayerExperience int,
+PlayerEnergy int,
+PlayerLevel int,
+PlayerGold int,
+Reward_4_ID int,
+Reward_4_Count int);
+
+\COPY  Orders(
+devtodev_id,
+time,
+level,
+isTester,
+cheat,
+install_date,
+app_version,
+Requirement_1_ID,
+Reward_1_Count,
+Requirement_1_Count,
+Reward_3_ID,
+IsOrderSpecial, 
+Reward_1_ID,
+Reward_3_Count,
+State,
+Reward_2_ID,
+Reward_2_Count, 
+Requirement_2_Count,
+Requirement_2_ID, 
+Requirement_3_Count,
+Requirement_3_ID,
+PlayerGems,
+PlayerExperience,
+PlayerEnergy,
+PlayerLevel,
+PlayerGold,
+Reward_4_ID,
+Reward_4_Count
+) FROM '/Users/mykras/Downloads/StepicoDB_Summer/csv_to_db/Orders.csv'
+DELIMITER ';' CSV HEADER;
+
+ALTER TABLE  Orders ALTER COLUMN time TYPE timestamptz USING to_timestamp(time);
+ALTER TABLE  Orders ALTER COLUMN install_date TYPE timestamptz USING to_timestamp(install_date);
