@@ -6,23 +6,6 @@ https://github.com/deltaDNA/sql-cookbook/blob/master/KPIs/New_Player_Retention_M
 ----------------------------
 -- New Player Retention Matrix
 
-
-/*
-/*
-https://github.com/deltaDNA/sql-cookbook/blob/master/KPIs/New_Player_Retention_Matrix.sql
-*/
-
-----------------------------
--- New Player Retention Matrix
-
-/*
-/*
-https://github.com/deltaDNA/sql-cookbook/blob/master/KPIs/New_Player_Retention_Matrix.sql
-*/
-
-----------------------------
--- New Player Retention Matrix
-
 declare 
 @install_interval interval = '30 day';
 
