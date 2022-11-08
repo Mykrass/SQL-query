@@ -1,4 +1,4 @@
-  /*
+/*
 /*
 https://github.com/deltaDNA/sql-cookbook/blob/master/KPIs/New_Player_Retention_Matrix.sql
 */
@@ -7,14 +7,17 @@ https://github.com/deltaDNA/sql-cookbook/blob/master/KPIs/New_Player_Retention_M
 -- New Player Retention Matrix
 
 declare 
-@install_interval interval = '30 day';
+@install_interval interval = '30 day',
+@start_date date = '2022-10-01',
+@finish_date date = '2022-10-30';
 
 with days_data as (
 select devtodevid 
 		, created::date as created
 		, eventtime::date as eventtime
 	from p106255.sessions
-	where created > current_date - @install_interval and eventtime < current_date
+	--where created > current_date - @install_interval and eventtime < current_date
+	where created between @start_date and @finish_date
 	group by 1, 2, 3
 ),
 
