@@ -7,7 +7,7 @@ https://github.com/deltaDNA/sql-cookbook/blob/master/KPIs/New_Player_Retention_M
 -- New Player Retention Matrix
 
 declare 
-@install_interval interval = '30 day',
+--@install_interval interval = '30 day',
 @start_date date = '2022-10-01',
 @finish_date date = '2022-10-30';
 
@@ -58,7 +58,7 @@ from days_data
 group by 1
 ),
 
-fin_matrix as( select *
+fin_matrix as( select created, "installs"
   ,round("R1q" / "installs"::float * 100, 2) as "R1"
   ,round("R2q" / "installs"::float * 100, 2) as "R2"
   ,round("R3q" / "installs"::float * 100, 2) as "R3"
