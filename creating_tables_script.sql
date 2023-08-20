@@ -490,3 +490,29 @@ DELIMITER ';' CSV HEADER;
 
 ALTER TABLE  Quests ALTER COLUMN time TYPE timestamptz USING to_timestamp(time);
 ALTER TABLE  Quests ALTER COLUMN install_date TYPE timestamptz USING to_timestamp(install_date);
+
+
+
+--- https://github.com/khuyentran1401/detect-data-drift-pipeline/blob/main/setup/create_table.sql
+DROP TABLE reference;
+CREATE TABLE reference
+(
+    instant bigint,
+    dteday timestamp without time zone,
+    season bigint,
+    yr bigint,
+    mnth bigint,
+    holiday bigint,
+    weekday bigint,
+    workingday bigint,
+    weathersit bigint,
+    temp double precision,
+    atemp double precision,
+    hum double precision,
+    windspeed double precision,
+    casual bigint,
+    registered bigint,
+    cnt bigint
+);
+
+\COPY reference FROM '/Users/mykras/Downloads/bikeride.csv' DELIMITER ',' CSV HEADER;
