@@ -1,14 +1,15 @@
 /*
 /*
 SQL Report - ARPPU by days from install
+https://demo-analytics.devtodev.com/space/2628/app/7590/reports/sql-query/master
 */
-declare
-@start_date date = '2022-06-01',
-@finish_date date = '2022-08-30';
+--declare
+--@start_date date = '2022-06-01',
+--@finish_date date = '2022-06-07';
 
 with user_data as (
     select devtodevid
-    from p106255.users
+    from p104704.users
     where not tester 
     and not cheater
     and country not in ('UA')
@@ -20,10 +21,10 @@ with user_data as (
       --, to_char(sum(p.priceusd)/count(distinct devtodevid), '$999,999,999,999.00') as "ARPPU"
       --, '$'||round((sum(p.priceusd)/count(distinct devtodevid))::numeric,2)|| ' per paying user' as "ARPPU"
   from user_data
-  join p106255.payments
+  join p104704.payments
   using (devtodevid)
-  where eventtime between @start_date and @finish_date
-      --eventtime >= current_date - interval '90 day' and eventtime < current_date
+  --where eventtime between @start_date and @finish_date
+  where eventtime >= current_date - interval '7 day' and eventtime < current_date
 
   group by 1
   )
@@ -31,3 +32,4 @@ with user_data as (
 select *
 from arppu
 order by 1
+;
