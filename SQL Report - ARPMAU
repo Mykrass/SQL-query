@@ -1,6 +1,7 @@
 /*
 /*
-SQL Report - ARPMAU
+SQL Report - ARPMAU for 3 in row
+https://demo-analytics.devtodev.com/space/2628/app/7590/reports/sql-query/master
 https://www.carrotquest.io/blog/arpu/
 */
 
@@ -12,7 +13,7 @@ with daily_revenue as (
   select
     to_char(eventtime, 'yyyy-mm') as dt,
     round(sum(priceusd), 2) as rev
-  from p106255.payments
+  from p104704.payments
   where 
     --eventtime::date between @start_date and @finish_date
     eventtime >= current_date - interval '6 month' and eventtime < current_date
@@ -31,7 +32,7 @@ daily_players as (
     to_char(eventtime, 'yyyy-mm') as dt,
     count(distinct devtodevid) as players
   from 
-    p106255.sessions
+    p104704.sessions
   group by 
     1
 ),
