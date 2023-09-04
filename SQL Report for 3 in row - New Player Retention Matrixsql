@@ -7,17 +7,17 @@ https://github.com/deltaDNA/sql-cookbook/blob/master/KPIs/New_Player_Retention_M
 -- New Player Retention Matrix
 
 declare 
---@install_interval interval = '30 day',
-@start_date date = '2022-10-01',
-@finish_date date = '2022-10-30';
+--@start_date date = '2022-10-01',
+--@finish_date date = '2022-10-30',
+@install_interval interval = '30 day';
 
 with days_data as (
 select devtodevid 
 		, created::date as created
 		, eventtime::date as eventtime
-	from p106255.sessions
-	--where created > current_date - @install_interval and eventtime < current_date
-	where created between @start_date and @finish_date
+	from p104704.sessions
+	where created > current_date - @install_interval and eventtime < current_date
+	--where created between @start_date and @finish_date
 	group by 1, 2, 3
 ),
 
@@ -52,8 +52,8 @@ select created
 	, count (distinct case when eventtime - created = 26 then devtodevid else null end) as "R26q"
 	, count (distinct case when eventtime - created = 27 then devtodevid else null end) as "R27q"
 	, count (distinct case when eventtime - created = 28 then devtodevid else null end) as "R28q"
-	, count (distinct case when eventtime - created = 29 then devtodevid else null end) as "R29q"
-	, count (distinct case when eventtime - created = 30 then devtodevid else null end) as "R30q"
+	--, count (distinct case when eventtime - created = 29 then devtodevid else null end) as "R29q"
+	--, count (distinct case when eventtime - created = 30 then devtodevid else null end) as "R30q"
 from days_data
 group by 1
 ),
@@ -86,8 +86,8 @@ fin_matrix as( select created, "installs"
   ,round("R26q" / "installs"::float * 100, 2) as "R26"
   ,round("R27q" / "installs"::float * 100, 2) as "R27"   
   ,round("R28q" / "installs"::float * 100, 2) as "R28"
-  ,round("R29q" / "installs"::float * 100, 2) as "R29"
-  ,round("R30q" / "installs"::float * 100, 2) as "R30" 
+  --,round("R29q" / "installs"::float * 100, 2) as "R29"
+  --,round("R30q" / "installs"::float * 100, 2) as "R30" 
 from matrix
 )
 
