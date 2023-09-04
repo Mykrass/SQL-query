@@ -2,6 +2,11 @@
 /*
 SQL Report - CARPU on day after install
 */
+
+--declare
+--@start_date date = '2023-06-01',
+--@finish_date date = '2023-07-01';
+
 with 
   user_data as (
     select 
@@ -9,12 +14,13 @@ with
       created::date AS install_date,
       generate_series AS day_from_install
     from 
-      p106255.users, generate_series(0, current_date - created::date)
+      p102968.users, generate_series(0, current_date - created::date)
     where 
       not tester 
       and not cheater
       and country not in ('UA')
-      and generate_series < current_date - @finish_date
+      --and generate_series < current_date - @finish_date
+      and generate_series < current_date - interval '30 day' and generate_series < current_date
   ),
 
   rev as (
@@ -26,12 +32,13 @@ with
     from 
       user_data as main
     left join
-      p106255.payments
+      p102968.payments
       on 
         main.devtodevid = payments.devtodevid
         AND day_from_install = payments.eventtime::date - payments.created::date
     where 
-      install_date between @start_date and @finish_date
+      --install_date between @start_date and @finish_date
+       install_date >= current_date - interval '30 day' and install_date< current_date
     group by 
       1, 2
     order by 
@@ -68,4 +75,4 @@ with
 
 select *
 from carpu_table
-order by 1
+order by 1;
