@@ -1,37 +1,41 @@
 /*
 /*
-SQL Report for 3 in row - Time spent per level
+SQL Report for 3 in row - Time_spent_per_level
+https://github.com/deltaDNA/sql-cookbook/blob/master/KPIs/Time_spent_per_level.sql
+https://demo-analytics.devtodev.com/space/2628/app/7590/start-panel/engagement/sessions/general
+
+--In the data CTE we add the last known value for the parameter userLevel to all the other events and bring the interesting columns into scope
+--Next we group all events and the data by the last known value for the userlevel and create the aggregates we are interested in.
 */
 
 --declare
 --@start_date date = '2023-06-01',
 --@finish_date date = '2023-07-01';
 
---In the data CTE we add the last known value for the parameter userLevel to all the other events and bring the interesting columns into scope
---Next we group all events and the data by the last known value for the userlevel and create the aggregates we are interested in.
-WITH t1 AS
-  (SELECT eventtype,
-          devtodevid,
-          --last_value(eventlevel IGNORE NULLS) over (partition BY devtodevid
-          last_value(eventlevel) over (partition BY devtodevid
-                                         ORDER BY eventtype) AS current_level,
-          eventtime,
-          activityduration
+WITH t1 AS(
+  SELECT  devtodevid
+          , eventtime
+          , last_value(eventlevel) OVER (PARTITION BY devtodevid
+                                         ORDER BY eventlevel) AS current_level
+          , activityduration
           
-   FROM p102968.sessions)
+  FROM p102968.sessions
+      where not tester 
+      and not cheater
+      and country not in ('UA')
+      --and eventtime between @start_date and @finish_date
+      and eventtime >= current_date - interval '7 day' and eventtime < current_date
+  )
    
-, t2 as(
-SELECT coalesce(current_level, 0) AS "Level",--replace not known yet with level 0
-        --sum(msSinceLastEvent)/1000 AS 'Seconds Spent On Level',
-        sum(activityduration) AS "Seconds Spent On Level",
-        count(DISTINCT devtodevid) AS "Number of users",
-        count(DISTINCT eventtime) AS "Total days spent",
-        count(DISTINCT eventtime)/count(DISTINCT devtodevid) AS "average days spent",
-        --sum(activityduration)/count(DISTINCT devtodevid) AS "average seconds in game spent on level",
-        sum(activityduration)/60/count(DISTINCT devtodevid) AS "average minutes in game spent on level"
-FROM t1
-GROUP BY current_level
-ORDER BY current_level
+, t2 AS(
+  SELECT  coalesce(current_level, 0) AS "Level"--replace not known yet with level 0
+        , count(DISTINCT devtodevid) AS "Number of users"
+        --, round(sum(activityduration)/count(DISTINCT devtodevid), 2) AS "Seconds in-game spent average user on level"
+        , round(sum(activityduration)/3600/count(DISTINCT devtodevid), 1) AS "Hours in-game spent average user on level"
+
+  FROM t1
+  GROUP BY 1
+  ORDER BY 1
 )   
 
-select * from t2 order by "Level";
+SELECT * FROM t2 ORDER BY 1;
