@@ -32,7 +32,7 @@ with t1 as (
     firstTransaction
     ,secondTransaction
     ,thirdTransaction
-    ,COALESCE(firstTransaction,0) + COALESCE(secondTransaction,0) + COALESCE(thirdTransaction,0) as transaction_sum
+    ,COALESCE(firstTransaction,0) + COALESCE(secondTransaction,0) + COALESCE(thirdTransaction,0) as transaction_col_sum
     ,count(*) as users
   from t2
   group by 1, 2, 3, 4
@@ -42,8 +42,8 @@ with t1 as (
 
 , t4 as(
   select row_number() over() as index
-    ,rank() over(partition by transaction_sum order by users desc) as rank
-    , *
+    ,rank() over(partition by transaction_col_sum order by users desc) as rank
+    ,*
   from t3
 )
 
