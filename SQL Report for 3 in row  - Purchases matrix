@@ -13,6 +13,7 @@ with t1 as (
   from p102968.payments
   where created > (select min(eventtime) from p102968.payments)--only get starters within time window
   --and revenueValidated in (0,1)
+  and valid is true
   and paymentsum is not null
 )
 
@@ -31,11 +32,19 @@ with t1 as (
     firstTransaction
     ,secondTransaction
     ,thirdTransaction
+    ,COALESCE(firstTransaction,0) + COALESCE(secondTransaction,0) + COALESCE(thirdTransaction,0) as transaction_sum
     ,count(*) as users
   from t2
-  group by 1, 2, 3
+  group by 1, 2, 3, 4
   having count(*) > 10
   order by 4 desc
 )
 
-select * from t3;
+, t4 as(
+  select row_number() over() as index
+    ,rank() over(partition by transaction_sum order by users desc) as rank
+    , *
+  from t3
+)
+
+select * from t4;
