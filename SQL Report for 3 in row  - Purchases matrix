@@ -4,30 +4,38 @@ SQL Report for 3 in row - Purchases matrix
 https://github.com/deltaDNA/sql-cookbook/blob/master/KPIs/first_two_purchases_matrix.sql
 */
 
-with data as (
+with t1 as (
   select 
-    devtodevid, 
-    priceusd,
-    rank() over (partition by devtodevid order by lastpaymentdate) as transactionNumber
+    devtodevid
+    ,priceusd
+    ,valid
+    ,rank() over (partition by devtodevid order by lastpaymentdate) as transactionNumber
   from p102968.payments
   where created > (select min(eventtime) from p102968.payments)--only get starters within time window
   --and revenueValidated in (0,1)
   and paymentsum is not null
 )
-,userData as (
+
+,t2 as (
   select
-    devtodevid, 
-    min(case when transactionNumber =1 then priceusd end) as firstTransaction, 
-    min(case when transactionNumber =2 then priceusd end) as secondTransaction,
-    min(case when transactionNumber =3 then priceusd end) as thirdTransaction
-  from data
-  group by 1)
-select
-  firstTransaction,
-  secondTransaction,
-  thirdTransaction,
-  count(*) as users
-from userData
-group by 1, 2, 3
-having count(*) > 10
-order by 4 desc;
+    devtodevid 
+    ,min(case when transactionNumber =1 then priceusd end) as firstTransaction 
+    ,min(case when transactionNumber =2 then priceusd end) as secondTransaction
+    ,min(case when transactionNumber =3 then priceusd end) as thirdTransaction
+  from t1
+  group by 1
+)
+  
+, t3 as (  
+  select
+    firstTransaction
+    ,secondTransaction
+    ,thirdTransaction
+    ,count(*) as users
+  from t2
+  group by 1, 2, 3
+  having count(*) > 10
+  order by 4 desc
+)
+
+select * from t3;
