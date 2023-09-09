@@ -4,47 +4,51 @@ SQL Report for 3 in row - Purchases matrix
 https://github.com/deltaDNA/sql-cookbook/blob/master/KPIs/first_two_purchases_matrix.sql
 */
 
+--declare
+--@start_date date = '2023-06-01',
+--@finish_date date = '2023-07-01';
+
 with t1 as (
   select 
-    devtodevid
+     eventtime
+    ,created
+    ,devtodevid
     ,priceusd
     ,valid
     ,rank() over (partition by devtodevid order by lastpaymentdate) as transactionNumber
   from p102968.payments
-  where created > (select min(eventtime) from p102968.payments)--only get starters within time window
-  --and revenueValidated in (0,1)
-  and valid is true
-  and paymentsum is not null
+  where eventtime >= current_date - interval '7 day' and eventtime < current_date
+  --and eventtime between @start_date and @finish_date
+  and created > (select min(eventtime) from p102968.payments)--only get starters within time window
+    and paymentsum is not null
+    and country not in ('UA')
+    and valid is true
+    and not cheater
+    and not tester 
 )
 
 ,t2 as (
   select
-    devtodevid 
+    devtodevid
+    ,eventtime::date - created::date as lifetime
     ,min(case when transactionNumber =1 then priceusd end) as firstTransaction 
     ,min(case when transactionNumber =2 then priceusd end) as secondTransaction
     ,min(case when transactionNumber =3 then priceusd end) as thirdTransaction
+    ,sum(priceusd) as sum_transaction
+  from t1
+  group by 1, 2
+  having min(case when transactionNumber =1 then priceusd end) > 0
+  order by 6 desc
+)
+
+, t3 as (  
+  select 
+    eventtime::date - created::date as lifetime
+    ,round(avg(priceusd),2) as avg_transaction
+    ,round(median(priceusd),2) as median_transaction
+    ,count(*) as users
   from t1
   group by 1
 )
-  
-, t3 as (  
-  select
-    firstTransaction
-    ,secondTransaction
-    ,thirdTransaction
-    ,COALESCE(firstTransaction,0) + COALESCE(secondTransaction,0) + COALESCE(thirdTransaction,0) as transaction_col_sum
-    ,count(*) as users
-  from t2
-  group by 1, 2, 3, 4
-  having count(*) > 10
-  order by 4 desc
-)
 
-, t4 as(
-  select row_number() over() as index
-    ,rank() over(partition by transaction_col_sum order by users desc) as rank
-    ,*
-  from t3
-)
-
-select * from t4;
+select * from t2 order by 1;
