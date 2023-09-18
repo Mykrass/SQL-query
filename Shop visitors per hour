@@ -1,0 +1,54 @@
+/*
+/*
+Activity of payers and non-payers
+Shop visitors per hour
+https://demo-analytics.devtodev.com/space/2628/app/7590/dashboard/master/331
+
+*/
+
+declare 
+--@start_date date = '2022-10-01',
+--@finish_date date = '2022-10-30',
+@days_interval interval = '7 day';
+
+
+with t1 as(
+select to_char(eventtime,'YYYY-MM-DD HH24') as dt
+  --,to_char(eventtime,'YYYY-MM-DD HH24:MI:SS')
+  ,count(devtodevid) as open_shop
+from p104704.custom_events
+where name = 'shop open'
+  and  
+    eventtime >= current_date - @days_interval and eventtime < current_date
+    --and eventtime::date between @start_date and @finish_date
+  and 
+    not tester 
+  and 
+    not cheater
+group by 1
+)
+
+, t2 as(
+select to_char(eventtime,'YYYY-MM-DD HH24') as dt
+  --,to_char(eventtime,'YYYY-MM-DD HH24:MI:SS')
+  ,count(devtodevid) as paying
+from p104704.payments
+where eventtime >= current_date - @days_interval and eventtime < current_date
+  --eventtime::date between @start_date and @finish_date
+  and 
+    not tester 
+  and 
+    not cheater
+group by 1
+)
+
+, t3 as(
+select t1.dt as date
+  ,t1.open_shop
+  ,t1.open_shop - t2.paying as non_paying
+  ,t2.paying
+from t1
+join t2 using (dt)
+)
+
+select * from t3 order by 1;
