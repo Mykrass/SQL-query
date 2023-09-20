@@ -14,7 +14,7 @@ with
       created::date AS install_date,
       generate_series AS day_from_install
     from 
-      p102968.users, generate_series(0, current_date - created::date)
+      p104704.users, generate_series(0, current_date - created::date)
     where 
       not tester 
       and not cheater
@@ -32,7 +32,7 @@ with
     from 
       user_data as main
     left join
-      p102968.payments
+      p104704.payments
       on 
         main.devtodevid = payments.devtodevid
         AND day_from_install = payments.eventtime::date - payments.created::date
