@@ -3,21 +3,21 @@
 SQL Report for 3 in row - Shop open frequency
 */
 select level
-, round(100 :: numeric*"1 time" / last_value("all ads viewed") over(order by level), 2) as "1 time"
-, round(100 :: numeric*"2 times" / last_value("all ads viewed") over(order by level), 2) as "2 times"
-, round(100 :: numeric*"3-5 times" / last_value("all ads viewed") over(order by level), 2) as "3-5 times"
-, round(100 :: numeric*"6+ times" / last_value("all ads viewed") over(order by level), 2) as "6+ times"
---, round(100 :: numeric*"all ads viewed" / first_value("all ads viewed") over(order by level), 2) as "all ads viewed"
+, round(100 :: numeric*"1 time" / last_value("10 times") over(order by level), 2) as "1 time"
+, round(100 :: numeric*"2 times" / last_value("10 times") over(order by level), 2) as "2 times"
+, round(100 :: numeric*"3-5 times" / last_value("10 times") over(order by level), 2) as "3-5 times"
+, round(100 :: numeric*"6+ times" / last_value("10 times") over(order by level), 2) as "6+ times"
+, round(100 :: numeric*"10 times" / first_value("10 times") over(order by level), 2) as "10 times"
 from(
   select level
   , count(distinct devtodevid) filter(where cnt=1) as "1 time"
   , count(distinct devtodevid) filter(where cnt=2) as "2 times"
   , count(distinct devtodevid) filter(where cnt>2 and cnt<6) as "3-5 times"
   , count(distinct devtodevid) filter(where cnt>5 and cnt<11) as "6+ times"
-  , count(distinct devtodevid) filter(where cnt>0 and cnt<11) as "all ads viewed"
+  , count(distinct devtodevid) filter(where cnt>0 and cnt<11) as "10 times"
   from(
   select devtodevid, cnt, level
-  from p104704.levelups
+  from p104704.payments
   left join(
   select devtodevid, count() cnt
   from p104704.custom_events
@@ -25,7 +25,7 @@ from(
   and name = 'shop open'
   group by 1) t1 using(devtodevid)
   )t2
-  where level < 9
+  where level < 10
   group by 1
   order by 1
 )t3;
