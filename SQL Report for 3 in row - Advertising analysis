@@ -18,14 +18,14 @@ from(
   , count(distinct devtodevid) filter(where cnt>0 and cnt<11) as "all ads viewed"
   from(
   select devtodevid, cnt, level
-  from p106255.levelups
+  from p104704.levelups
   left join(
   select devtodevid, count() cnt
-  from p106255.ad_impressions
+  from p104704.ad_impressions
   where created >= current_date - interval '3 month'
   group by 1) t1 using(devtodevid)
   )t2
   where level < 9
   group by 1
   order by 1
-)t3
+)t3;
