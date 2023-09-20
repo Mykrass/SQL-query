@@ -17,7 +17,8 @@ from(
   , count(distinct devtodevid) filter(where cnt>0 and cnt<11) as "10 times"
   from(
   select devtodevid, cnt, level
-  from p104704.payments
+  from p104704.sessions
+  --from p104704.payments
   left join(
   select devtodevid, count() cnt
   from p104704.custom_events
