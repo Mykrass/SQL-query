@@ -7,7 +7,7 @@ select level
 , round(100 :: numeric*"2 times" / last_value("10 times") over(order by level), 2) as "2 times"
 , round(100 :: numeric*"3-5 times" / last_value("10 times") over(order by level), 2) as "3-5 times"
 , round(100 :: numeric*"6+ times" / last_value("10 times") over(order by level), 2) as "6+ times"
-, round(100 :: numeric*"10 times" / first_value("10 times") over(order by level), 2) as "10 times"
+--, round(100 :: numeric*"10 times" / first_value("10 times") over(order by level), 2) as "10 times"
 from(
   select level
   , count(distinct devtodevid) filter(where cnt=1) as "1 time"
@@ -25,7 +25,7 @@ from(
   and name = 'shop open'
   group by 1) t1 using(devtodevid)
   )t2
-  where level < 10
+  where level < 8
   group by 1
   order by 1
 )t3;
