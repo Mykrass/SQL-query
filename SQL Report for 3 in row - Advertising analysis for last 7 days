@@ -22,7 +22,7 @@ from(
   left join(
   select devtodevid, count() cnt
   from p104704.ad_impressions
-  where created >= current_date - interval '3 month'
+  where created >= current_date - interval '7 day'
   group by 1) t1 using(devtodevid)
   )t2
   where level < 9
