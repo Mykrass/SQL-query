@@ -47,7 +47,6 @@ with t1 as(
   , round(100 :: numeric*"2 times" / last_value("10 times") over(order by level), 2) as "2 times"
   , round(100 :: numeric*"3-5 times" / last_value("10 times") over(order by level), 2) as "3-5 times"
   , round(100 :: numeric*"6+ times" / last_value("10 times") over(order by level), 2) as "6+ times"
-  --, round(100 :: numeric*"10 times" / first_value("10 times") over(order by level), 2) as "10 times"
   from t3 
 )
 
