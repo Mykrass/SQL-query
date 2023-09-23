@@ -91,4 +91,4 @@ fin_matrix as( select created, "installs"
 from matrix
 )
 
-select * from fin_matrix order by 1
+select * from fin_matrix order by 1;
