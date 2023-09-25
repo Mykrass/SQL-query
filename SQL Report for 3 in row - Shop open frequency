@@ -4,7 +4,7 @@ SQL Report for 3 in row - Shop open frequency
 */
 
 declare 
-@days_interval interval = '7 day',
+@days_interval interval = '14 day',
 @start_date date = '2022-10-01',
 @finish_date date = '2022-10-30';
 
@@ -51,6 +51,7 @@ with t1 as(
 )
 
 select 'How many players and how often they visit the store?' as "Shop open"
+    ,''|| "10 times" || ' (for last ' || @days_interval || ')' as "Total"
     ,''|| "1 time" || '' as "1 time"
         ,''|| "2 times" || '' as "2 times"
             ,''|| "3-5 times" || '' as "3-5 times"
@@ -59,6 +60,7 @@ from t3
  
 union all
 select 'What is  looks like in percentage?'
+    ,''|| "10 times" || '% (on ' || current_date ||')' as "Total"
     ,''|| "1 time" || '%' as "1 time"
         ,''|| "2 times" || '%' as "2 times"
             ,''|| "3-5 times" || '%' as "3-5 times"
