@@ -37,7 +37,6 @@ with t1 as(
   , count(distinct devtodevid) filter(where cnt>2 and cnt<6) as "3-5 times"
   , count(distinct devtodevid) filter(where cnt>5 and cnt<max_level) as "6+ times"
   , count(distinct devtodevid) filter(where cnt>0 and cnt<max_level) as "total times"
-  --, count(distinct devtodevid) filter(where cnt>0 and cnt<(select max(distinct eventlevel) from p104704.custom_events)) as "10 times"
   from t1
   join t2 using(devtodevid)
 )
