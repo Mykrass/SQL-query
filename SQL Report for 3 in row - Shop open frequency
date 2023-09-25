@@ -44,10 +44,10 @@ with t1 as(
 
 ,t4 as(
   select
-      round(100 :: numeric*"1 time" / "total times", 2) as "1 time"
-    , round(100 :: numeric*"2 times" / "total times", 2) as "2 times"
-    , round(100 :: numeric*"3-5 times" / "total times", 2) as "3-5 times"
-    , round(100 :: numeric*"6+ times" / "total times", 2) as "6+ times"
+      round(100 :: numeric*"1 time"/"total times", 2) as "1 time"
+    , round(100 :: numeric*"2 times"/"total times", 2) as "2 times"
+    , round(100 :: numeric*"3-5 times"/"total times", 2) as "3-5 times"
+    , round(100 :: numeric*"6+ times"/"total times", 2) as "6+ times"
     , round(100 :: numeric*"total times"/"total times", 2) as "total times"
   from t3 
 )
