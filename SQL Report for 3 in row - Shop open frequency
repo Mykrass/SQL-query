@@ -4,9 +4,9 @@ SQL Report for 3 in row - Shop open frequency
 */
 
 declare 
-@days_interval interval = '14 day',
-@start_date date = '2022-10-01',
-@finish_date date = '2022-10-30';
+@days_interval interval = '14 day';
+--@start_date date = '2022-10-01',
+--@finish_date date = '2022-10-30';
 
 with t1 as(
   select devtodevid
