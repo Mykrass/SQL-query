@@ -50,7 +50,7 @@ with t1 as(
   from t3 
 )
 
-select 'How many?' as "Shop open"
+select 'How many players and how often they visit the store?' as "Shop open"
     ,''|| "1 time" || '' as "1 time"
         ,''|| "2 times" || '' as "2 times"
             ,''|| "3-5 times" || '' as "3-5 times"
@@ -58,7 +58,7 @@ select 'How many?' as "Shop open"
 from t3
  
 union all
-select 'Which percent?'
+select 'What is  looks like in percentage?'
     ,''|| "1 time" || '%' as "1 time"
         ,''|| "2 times" || '%' as "2 times"
             ,''|| "3-5 times" || '%' as "3-5 times"
