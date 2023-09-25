@@ -30,24 +30,37 @@ with t1 as(
 )
 
 ,t3 as(
-  select --level
-   count(distinct devtodevid) filter(where cnt=1) as "1 time"
+  select
+    count(distinct devtodevid) filter(where cnt=1) as "1 time"
   , count(distinct devtodevid) filter(where cnt=2) as "2 times"
   , count(distinct devtodevid) filter(where cnt>2 and cnt<6) as "3-5 times"
   , count(distinct devtodevid) filter(where cnt>5 and cnt<11) as "6+ times"
   , count(distinct devtodevid) filter(where cnt>0 and cnt<11) as "10 times"
   from t1
   join t2 using(devtodevid)
-  --group by 1
 )
 
 ,t4 as(
-  select --level
-  round(100 :: numeric*"1 time" / "10 times", 2) as "1 time"
-  , round(100 :: numeric*"2 times" / "10 times", 2) as "2 times"
-  , round(100 :: numeric*"3-5 times" / "10 times", 2) as "3-5 times"
-  , round(100 :: numeric*"6+ times" / "10 times", 2) as "6+ times"
+  select
+    round(100 :: numeric*"1 time" / "10 times", 2) as "1 time"
+    , round(100 :: numeric*"2 times" / "10 times", 2) as "2 times"
+    , round(100 :: numeric*"3-5 times" / "10 times", 2) as "3-5 times"
+    , round(100 :: numeric*"6+ times" / "10 times", 2) as "6+ times"
+    , round(100 :: numeric*"10 times"/"10 times", 2) as "10 times"
   from t3 
 )
 
-select * from t4 order by 1;
+select 'How many?' as "Shop open"
+    ,''|| "1 time" || '' as "1 time"
+        ,''|| "2 times" || '' as "2 times"
+            ,''|| "3-5 times" || '' as "3-5 times"
+                ,''|| "6+ times" || '' as "6+ times"
+from t3
+ 
+union all
+select 'Which percent?'
+    ,''|| "1 time" || '%' as "1 time"
+        ,''|| "2 times" || '%' as "2 times"
+            ,''|| "3-5 times" || '%' as "3-5 times"
+                ,''|| "6+ times" || '%' as "6+ times"
+from t4;
