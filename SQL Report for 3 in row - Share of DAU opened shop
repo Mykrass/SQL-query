@@ -1,0 +1,70 @@
+/*
+/*
+SQL Report for 3 in row - Share of DAU opened shop
+*/
+
+declare 
+@days_interval interval = '14 day';
+
+with t1 as(
+  select eventtime::date as dt -- here we group dates by months
+    ,count(distinct devtodevid) as dau
+  from p104704.sessions
+  where eventtime >= current_date - @days_interval and eventtime < current_date  -- interval for the report-last 1 month
+  and tester is false  -- exclusion of testers
+  and cheater is false  -- exclusion of cheaters
+  group by 1
+  order by 1 asc
+)
+
+, t2 as(
+  select eventtime::date as dt -- here we group dates by months
+    ,count(distinct devtodevid) as dau_event
+  from p104704.custom_events
+  where eventtime >= current_date - @days_interval and eventtime < current_date  -- interval for the report-last 1 month
+  and name = 'shop open'
+  and tester is false  -- exclusion of testers
+  and cheater is false  -- exclusion of cheaters
+  group by 1
+  order by 1 asc
+)
+
+, t3 as(
+  select eventtime::date as dt -- here we group dates by months
+    ,count(distinct devtodevid) as dau_event
+  from p104704.custom_events
+  where lastpaymentdate >= current_date - @days_interval and lastpaymentdate < current_date  -- interval for the report-last 1 month
+  and name = 'shop open'
+  and tester is false  -- exclusion of testers
+  and cheater is false  -- exclusion of cheaters
+  group by 1
+  order by 1 asc
+)
+
+, t4 as(
+  select t1.dt
+    , dau as "DAU"
+    , round(100 :: numeric*dau_event/dau, 2) as "Share of DAU opened shop"
+  from t1
+  join t2 using(dt)
+)
+
+, t5 as(
+  select t1.dt
+    , dau as "DAU"
+    , round(100 :: numeric*dau_event/dau, 2) as "Share of DAU opened shop and paied"
+  from t1
+  join t3 using(dt)
+)
+
+, t6 as(
+  select dt as "Date"
+    , "Share of DAU opened shop"
+        --,''|| "Share of DAU opened shop" || '%' as "Share of DAU opened shop"
+    , "Share of DAU opened shop and paied"
+        --,''|| "Share of DAU opened shop and paied" || '%' as "Share of DAU opened shop and paied"
+  from t4
+  join t5 using(dt)
+)
+
+select * from t6;
