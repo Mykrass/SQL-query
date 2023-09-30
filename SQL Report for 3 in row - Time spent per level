@@ -19,7 +19,7 @@ WITH t1 AS(
                                          ORDER BY eventlevel) AS current_level
           , activityduration
           
-  FROM p102968.sessions
+  FROM p104704.sessions
       where not tester 
       and not cheater
       and country not in ('UA')
