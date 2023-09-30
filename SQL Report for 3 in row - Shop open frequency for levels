@@ -5,9 +5,7 @@ Version for Stacked Area Chat
 */
 
 declare 
-@days_interval interval = '7 day',
-@start_date date = '2022-10-01',
-@finish_date date = '2022-10-30';
+@days_interval interval = '7 day';
 
 with t1 as(
   select devtodevid
@@ -22,7 +20,6 @@ with t1 as(
   where name = 'shop open'
     and  
       eventtime >= current_date - @days_interval and eventtime < current_date
-      --and eventtime::date between @start_date and @finish_date
     and 
       not tester 
     and 
