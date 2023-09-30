@@ -50,4 +50,13 @@ with t1 as(
   from t3 
 )
 
-select * from t4 order by 1;
+, t5 as(
+  select level
+          ,''|| "1 time" || '%' as "1 time"
+              ,''|| "2 times" || '%' as "2 times"
+                  ,''|| "3-5 times" || '%' as "3-5 times"
+                      ,''|| "6+ times" || '%' as "6+ times"
+  from t4
+)
+
+select * from t4;
