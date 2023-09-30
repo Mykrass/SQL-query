@@ -1,12 +1,11 @@
 /*
 /*
 SQL Report for 3 in row - Shop open frequency
+Version not for Viz
 */
 
 declare 
 @days_interval interval = '14 day';
---@start_date date = '2022-10-01',
---@finish_date date = '2022-10-30';
 
 with t1 as(
   select devtodevid
@@ -22,7 +21,6 @@ with t1 as(
   where name = 'shop open'
     and  
       eventtime >= current_date - @days_interval and eventtime < current_date
-      --and eventtime::date between @start_date and @finish_date
     and 
       not tester 
     and 
