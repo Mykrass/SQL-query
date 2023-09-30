@@ -42,21 +42,23 @@ with t1 as(
 )
 
 ,t4 as(
-  select level
-  , round(100 :: numeric*"1 time" / last_value("10 times") over(order by level), 2) as "1 time"
-  , round(100 :: numeric*"2 times" / last_value("10 times") over(order by level), 2) as "2 times"
-  , round(100 :: numeric*"3-5 times" / last_value("10 times") over(order by level), 2) as "3-5 times"
-  , round(100 :: numeric*"6+ times" / last_value("10 times") over(order by level), 2) as "6+ times"
+  select 
+  ''|| level || ' level' as "level"
+      , round(100 :: numeric*"1 time" / last_value("10 times") over(order by level), 2) as "1 time"
+        , round(100 :: numeric*"2 times" / last_value("10 times") over(order by level), 2) as "2 times"
+          , round(100 :: numeric*"3-5 times" / last_value("10 times") over(order by level), 2) as "3-5 times"
+            , round(100 :: numeric*"6+ times" / last_value("10 times") over(order by level), 2) as "6+ times"
   from t3 
 )
 
 , t5 as(
-  select level
-          ,''|| "1 time" || '%' as "1 time"
-              ,''|| "2 times" || '%' as "2 times"
-                  ,''|| "3-5 times" || '%' as "3-5 times"
-                      ,''|| "6+ times" || '%' as "6+ times"
+  select 
+  ''|| level || ' level' as "Levels"
+      ,''|| "1 time" || '%' as "1 time"
+          ,''|| "2 times" || '%' as "2 times"
+              ,''|| "3-5 times" || '%' as "3-5 times"
+                  ,''|| "6+ times" || '%' as "6+ times"
   from t4
 )
 
-select * from t4;
+select * from t5;
