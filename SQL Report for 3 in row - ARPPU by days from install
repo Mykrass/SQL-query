@@ -18,10 +18,7 @@ with user_data as (
 
   arppu as (
   select eventtime::date - created::date as "Days from install"
-      --''|| eventtime::date - created::date || ' days from install' as "Days from install"
       , round(sum(priceusd)/count(distinct devtodevid), 2) as "ARPPU"
-      --, to_char(sum(priceusd)/count(distinct devtodevid), '$999,999,999,999.00') as "ARPPU"
-      --,'$'||round((sum(priceusd)/count(distinct devtodevid))::numeric,2)|| ' per paying user' as "ARPPU"
   from user_data
   join p104704.payments
   using (devtodevid)
@@ -31,5 +28,12 @@ with user_data as (
   group by 1
   order by 1
   )
+
+, viz as( 
+  select
+      ''||"Days from install"|| ' days from install' as "Days from install"
+      ,'$'||"ARPPU"|| ' per paying user' as "ARPPU"
+  from arppu
+)
   
-select * from arppu  order by 1;
+select * from  viz order by 1;
