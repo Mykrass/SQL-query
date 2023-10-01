@@ -4,7 +4,7 @@ SQL Report for 3 in row - ARPPU by days from install
 https://demo-analytics.devtodev.com/space/2628/app/7590/reports/sql-query/master
 */
 declare 
-@days_interval interval = '14 day';
+@days_interval interval = '7 day';
 --@start_date date = '2023-09-01',
 --@finish_date date = '2023-09-07';
 
