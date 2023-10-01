@@ -32,5 +32,4 @@ with user_data as (
   order by 1
   )
   
-  
 select * from arppu  order by 1;
