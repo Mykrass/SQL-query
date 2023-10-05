@@ -16,9 +16,9 @@ with t1 as(
     ,valid
     ,rank() over (partition by devtodevid order by lastpaymentdate) as transactionNumber
   from p102968.payments
-  where eventtime >= current_date - interval '7 day' and eventtime < current_date
-  --and eventtime between @start_date and @finish_date
-  and created > (select min(eventtime) from p102968.payments)--only get starters within time window
+  where created >= current_date - @days_interval and created < current_date
+  --where eventtime >= current_date - @days_interval and eventtime < current_date
+    and created > (select min(eventtime) from p102968.payments)
     and paymentsum is not null
     and country not in ('UA')
     and valid is true
@@ -30,16 +30,12 @@ with t1 as(
   select
     devtodevid
     ,eventtime::date - created::date as lifetime
-    ,min(case when transactionNumber =1 then priceusd end) as firstTransaction 
-    ,min(case when transactionNumber =2 then priceusd end) as secondTransaction
-    ,min(case when transactionNumber =3 then priceusd end) as thirdTransaction
     ,max(eventtime::date - created::date) over() as max_lifetime
     ,count() as cnt
     ,sum(priceusd) as sum_transaction
   from t1
   group by 1, 2
   having min(case when transactionNumber =1 then priceusd end) > 0
-  order by 8 desc
 )
 
 ,t3 as(
