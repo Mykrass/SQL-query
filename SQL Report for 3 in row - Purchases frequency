@@ -59,7 +59,7 @@ with t1 as(
   from t3 
 )
 
-select 'How many, and how often do players pay?' as "Purchases"
+select 'How many, and how often, do new players pay?' as "Purchases"
     ,''|| "total times" || ' (for last ' || @days_interval || ')' as "Total"
         ,''|| "1 time" || '' as "1 time"
             ,''|| "2 times" || '' as "2 times"
