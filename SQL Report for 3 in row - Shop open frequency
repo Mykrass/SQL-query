@@ -1,54 +1,40 @@
 /*
 /*
-SQL Report for 3 in row - Purchases frequency
-Version not for Viz
+SQL Report for 3 in row - Shop open frequency
 */
 
 declare 
-@days_interval interval = '30 day';
+@days_interval interval = '14 day';
 
 with t1 as(
-  select 
-     devtodevid
-    ,created
-    ,eventtime
-    ,valid
-    ,rank() over (partition by devtodevid order by lastpaymentdate) as transactionNumber
-    ,priceusd
-  from p102968.payments
-  where created >= current_date - @days_interval and created < current_date
-  --where eventtime >= current_date - @days_interval and eventtime < current_date
-    and created > (select min(eventtime) from p102968.payments)
-    and paymentsum is not null
-    and country not in ('UA')
-    and valid is true
-    and not cheater
-    and not tester 
+  select devtodevid
+    ,eventlevel as level
+    ,max(eventlevel) over() as max_level
+  from p104704.sessions
 )
-
 ,t2 as(
-  select
-    devtodevid
-    ,eventtime::date - created::date as lifetime
-    ,max(eventtime::date - created::date) over() as max_lifetime
+  select devtodevid
     ,count() as cnt
-    ,sum(priceusd) as sum_transaction
-  from t1
-  group by 1, 2
-  having min(case when transactionNumber =1 then priceusd end) > 0
+  from p104704.custom_events
+  where name = 'shop open'
+    and  
+      eventtime >= current_date - @days_interval and eventtime < current_date
+    and 
+      not tester 
+    and 
+      not cheater
+  group by 1
 )
-
 ,t3 as(
   select
     count(distinct devtodevid) filter(where cnt=1) as "1 time"
       ,count(distinct devtodevid) filter(where cnt=2) as "2 times"
         ,count(distinct devtodevid) filter(where cnt>2 and cnt<6) as "3-5 times"
-          ,count(distinct devtodevid) filter(where cnt>5 and cnt<max_lifetime) as "6+ times"
-            ,count(distinct devtodevid) filter(where cnt>0 and cnt<max_lifetime) as "total times"
+          ,count(distinct devtodevid) filter(where cnt>5 and cnt<max_level) as "6+ times"
+            ,count(distinct devtodevid) filter(where cnt>0 and cnt<max_level) as "total times"
   from t1
   join t2 using(devtodevid)
 )
-
 ,t4 as(
   select
       round(100 :: numeric*"1 time"/"total times", 2) as "1 time"
@@ -58,8 +44,7 @@ with t1 as(
               ,round(100 :: numeric*"total times"/"total times", 2) as "total times"
   from t3 
 )
-
-select 'How many, and how often, do new players pay?' as "Purchases"
+select 'How many players and how often they visit the store?' as "Shop open"
     ,''|| "total times" || ' (for last ' || @days_interval || ')' as "Total"
         ,''|| "1 time" || '' as "1 time"
             ,''|| "2 times" || '' as "2 times"
