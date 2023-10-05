@@ -5,16 +5,16 @@ Version not for Viz
 */
 
 declare 
-@days_interval interval = '14 day';
+@days_interval interval = '30 day';
 
 with t1 as(
   select 
-     eventtime
+     devtodevid
     ,created
-    ,devtodevid
-    ,priceusd
+    ,eventtime
     ,valid
     ,rank() over (partition by devtodevid order by lastpaymentdate) as transactionNumber
+    ,priceusd
   from p102968.payments
   where created >= current_date - @days_interval and created < current_date
   --where eventtime >= current_date - @days_interval and eventtime < current_date
@@ -41,10 +41,10 @@ with t1 as(
 ,t3 as(
   select
     count(distinct devtodevid) filter(where cnt=1) as "1 time"
-  , count(distinct devtodevid) filter(where cnt=2) as "2 times"
-  , count(distinct devtodevid) filter(where cnt>2 and cnt<6) as "3-5 times"
-  , count(distinct devtodevid) filter(where cnt>5 and cnt<max_lifetime) as "6+ times"
-  , count(distinct devtodevid) filter(where cnt>0 and cnt<max_lifetime) as "total times"
+      ,count(distinct devtodevid) filter(where cnt=2) as "2 times"
+        ,count(distinct devtodevid) filter(where cnt>2 and cnt<6) as "3-5 times"
+          ,count(distinct devtodevid) filter(where cnt>5 and cnt<max_lifetime) as "6+ times"
+            ,count(distinct devtodevid) filter(where cnt>0 and cnt<max_lifetime) as "total times"
   from t1
   join t2 using(devtodevid)
 )
@@ -52,10 +52,10 @@ with t1 as(
 ,t4 as(
   select
       round(100 :: numeric*"1 time"/"total times", 2) as "1 time"
-    , round(100 :: numeric*"2 times"/"total times", 2) as "2 times"
-    , round(100 :: numeric*"3-5 times"/"total times", 2) as "3-5 times"
-    , round(100 :: numeric*"6+ times"/"total times", 2) as "6+ times"
-    , round(100 :: numeric*"total times"/"total times", 2) as "total times"
+        ,round(100 :: numeric*"2 times"/"total times", 2) as "2 times"
+          ,round(100 :: numeric*"3-5 times"/"total times", 2) as "3-5 times"
+            ,round(100 :: numeric*"6+ times"/"total times", 2) as "6+ times"
+              ,round(100 :: numeric*"total times"/"total times", 2) as "total times"
   from t3 
 )
 
@@ -68,7 +68,7 @@ select 'How many, and how often, do new players pay?' as "Purchases"
 from t3
  
 union all
-select 'What is  looks like in percentage?'
+select 'What is looks like in percentage?'
     ,''|| "total times" || '% (on ' || current_date ||')' as "Total"
         ,''|| "1 time" || '%' as "1 time"
             ,''|| "2 times" || '%' as "2 times"
