@@ -4,21 +4,19 @@ SQL Report for 3 in row - Purchases matrix
 https://github.com/deltaDNA/sql-cookbook/blob/master/KPIs/first_two_purchases_matrix.sql
 */
 
---declare
---@start_date date = '2023-06-01',
---@finish_date date = '2023-07-01';
+declare 
+@days_interval interval = '14 day';
 
 with t1 as (
   select 
-     eventtime
+     devtodevid
     ,created
-    ,devtodevid
-    ,priceusd
+    ,eventtime
     ,valid
     ,rank() over (partition by devtodevid order by lastpaymentdate) as transactionNumber
+    ,priceusd
   from p102968.payments
-  where eventtime >= current_date - interval '7 day' and eventtime < current_date
-  --and eventtime between @start_date and @finish_date
+  where eventtime >= current_date - @days_interval and eventtime < current_date
   and created > (select min(eventtime) from p102968.payments)--only get starters within time window
     and paymentsum is not null
     and country not in ('UA')
@@ -44,9 +42,8 @@ with t1 as (
 , t3 as (  
   select 
     eventtime::date - created::date as lifetime
-    ,round(avg(priceusd),2) as avg_transaction
-    ,round(median(priceusd),2) as median_transaction
     ,count(*) as users
+    ,round(avg(priceusd),2) as avg_transaction
   from t1
   group by 1
 )
