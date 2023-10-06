@@ -1,0 +1,31 @@
+/*
+/*
+SQL Report for 3 in row - Predicted Status and Real Paid
+*/
+
+declare 
+@days_interval interval = '30 day';
+
+with t1 as(
+  select distinct devtodevid
+    ,predicted_payingstatus
+  from p104704.users
+)
+
+,t2 as(
+  select distinct devtodevid
+  from p104704.payments
+  where lastpaymentdate >= current_date - @days_interval and lastpaymentdate < current_date
+)
+,t3 as(
+  select devtodevid
+    ,predicted_payingstatus
+  from t1
+  join t2 using(devtodevid)
+)
+
+select predicted_payingstatus as "Predicted paying status"
+    ,count(devtodevid) as "Real paid"
+from t3
+group by 1
+order by 2 desc;
