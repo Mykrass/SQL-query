@@ -4,12 +4,13 @@ SQL Report for 3 in row - Predicted Status and Real Paid
 */
 
 declare 
-@days_interval interval = '30 day';
+@days_interval interval = '7 day';
 
 with t1 as(
   select distinct devtodevid
     ,predicted_payingstatus
   from p104704.users
+  where created >= current_date - @days_interval and created < current_date
 )
 
 ,t2 as(
@@ -24,8 +25,40 @@ with t1 as(
   join t2 using(devtodevid)
 )
 
-select predicted_payingstatus as "Predicted paying status"
-    ,count(devtodevid) as "Real paid"
-from t3
-group by 1
-order by 2 desc;
+,t4 as(
+  select
+    count(distinct devtodevid) filter(where predicted_payingstatus='will pay ') as "will pay"
+      ,count(distinct devtodevid) filter(where predicted_payingstatus='more likely to pay') as "more likely to pay"
+        ,count(distinct devtodevid) filter(where predicted_payingstatus='more likely not to pay') as "more likely not to pay"
+          ,count(distinct devtodevid) filter(where predicted_payingstatus LIKE 'won% pay') as "won't pay"
+            ,count(distinct devtodevid) as "total payed"
+  from t1
+  join t2 using(devtodevid)
+)
+
+,t5 as(
+  select
+      round(100 :: numeric*"will pay"/"total payed", 2) as "will pay"
+    , round(100 :: numeric*"more likely to pay"/"total payed", 2) as "more likely to pay"
+    , round(100 :: numeric*"more likely not to pay"/"total payed", 2) as "more likely not to pay"
+    , round(100 :: numeric*"won't pay"/"total payed", 2) as "won't pay"
+    , round(100 :: numeric*"total payed"/"total payed", 2) as "total payed"
+  from t4 
+)
+
+select 'How many from predicted do new players pay?' as "Question"
+    ,''|| "total payed" || ' (for last ' || @days_interval || ')' as "total payed"
+        ,''|| "will pay" || '' as "will pay"
+            ,''|| "more likely to pay" || '' as "more likely to pay"
+                ,''|| "more likely not to pay" || '' as "more likely not to pay"
+                    ,''|| "won't pay" || '' as "won't pay"
+from t4
+ 
+union all
+select 'What is  looks like in percentage?'
+    ,''|| "total payed" || '% (on ' || current_date ||')' as "Total"
+        ,''|| "will pay" || '%' as "will pay"
+            ,''|| "more likely to pay" || '%' as "more likely to pay"
+                ,''|| "more likely not to pay" || '%' as "more likely not to pay"
+                    ,''|| "won't pay" || '%' as "won't pay"
+from t5;
