@@ -1,6 +1,6 @@
 /*
 /*
-SQL Report for 3 in row - Predicted Status and Real Paid
+SQL Report for 3 in row - Predicted Paid Status
 */
 
 declare 
@@ -10,13 +10,16 @@ with t1 as(
   select distinct devtodevid
     ,predicted_payingstatus
   from p104704.users
-  where created >= current_date - @days_interval and created < current_date
 )
 
 ,t2 as(
   select distinct devtodevid
   from p104704.payments
-  where lastpaymentdate >= current_date - @days_interval and lastpaymentdate < current_date
+  where eventtime >= current_date - @days_interval and eventtime < current_date
+    and 
+      not tester 
+    and 
+      not cheater
 )
 ,t3 as(
   select devtodevid
@@ -46,7 +49,7 @@ with t1 as(
   from t4 
 )
 
-select 'How many from predicted do new players pay?' as "Question"
+select 'How many players from predicted do real paying?' as "Question"
     ,''|| "total payed" || ' (for last ' || @days_interval || ')' as "total payed"
         ,''|| "will pay" || '' as "will pay"
             ,''|| "more likely to pay" || '' as "more likely to pay"
@@ -56,7 +59,7 @@ from t4
  
 union all
 select 'What is  looks like in percentage?'
-    ,''|| "total payed" || '% (on ' || current_date ||')' as "Total"
+    ,''|| "total payed" || '% (on ' || current_date ||')' as "total payed"
         ,''|| "will pay" || '%' as "will pay"
             ,''|| "more likely to pay" || '%' as "more likely to pay"
                 ,''|| "more likely not to pay" || '%' as "more likely not to pay"
