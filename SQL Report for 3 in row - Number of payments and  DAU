@@ -1,0 +1,33 @@
+/*
+/*
+SQL Report for 3 in row - Number of payments / DAU
+https://demo-analytics.devtodev.com/space/2628/reports/sql/master/346/?type=dash
+*/
+
+declare 
+@days_interval interval = '30 day';
+
+with t1 as(
+  select to_char(eventtime, 'yyyy-mm-dd') as day, count(distinct(devtodevid)) as dau
+  from p105094.sessions
+  where eventtime >=current_date - @days_interval and eventtime < current_date
+  and country = any (@country)
+  group by day
+) 
+
+,t2 as(
+  select to_char(eventtime, 'yyyy-mm-dd') as day, count(paymentid) as "Number of payments" 
+	from p105094.payments
+  where eventtime >=current_date - @days_interval and eventtime < current_date
+  group by day
+)
+
+,t3 as(
+  select *
+  from t1 
+  left join t2 using(day)
+  order by day
+)
+	
+select day,  "Number of payments" ,  "Number of payments" * 100.0 /dau as "Percentage from DAU"
+from t3;
