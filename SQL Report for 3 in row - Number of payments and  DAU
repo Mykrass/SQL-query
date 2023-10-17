@@ -5,21 +5,22 @@ https://demo-analytics.devtodev.com/space/2628/reports/sql/master/346/?type=dash
 */
 
 declare 
-@days_interval interval = '30 day';
+@days_interval interval = '30 day',
+@country text = ('US');
 
 with t1 as(
   select to_char(eventtime, 'yyyy-mm-dd') as day, count(distinct(devtodevid)) as dau
   from p105094.sessions
   where eventtime >=current_date - @days_interval and eventtime < current_date
-  and country = any (@country)
-  group by day
+  and country in (@country)
+  group by 1
 ) 
 
 ,t2 as(
   select to_char(eventtime, 'yyyy-mm-dd') as day, count(paymentid) as "Number of payments" 
 	from p105094.payments
   where eventtime >=current_date - @days_interval and eventtime < current_date
-  group by day
+  group by 1
 )
 
 ,t3 as(
