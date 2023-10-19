@@ -12,7 +12,7 @@ with t1 as(
   select to_char(eventtime, 'yyyy-mm-dd') as day, count(distinct(devtodevid)) as dau
   from p105094.sessions
   where eventtime >=current_date - @days_interval and eventtime < current_date
-  and country in (@country)
+  --and country in (@country)
   group by 1
 ) 
 
@@ -24,11 +24,15 @@ with t1 as(
 )
 
 ,t3 as(
-  select *
+  select t1.day, dau, "Number of payments"
   from t1 
   left join t2 using(day)
   order by day
 )
-	
-select day,  "Number of payments" ,  "Number of payments" * 100.0 /dau as "Percentage from DAU"
-from t3;
+
+,t4 as(
+  select day,  "Number of payments" ,  "Number of payments" * 100.0 /dau as "Percentage from DAU"
+  from t3
+)
+
+select * from t4 order by 1;
