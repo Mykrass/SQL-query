@@ -1,0 +1,41 @@
+/*
+/*
+SQL Report for 3 in row - First-time payers / DAU
+https://demo-analytics.devtodev.com/space/2628/reports/sql/master/346/?type=dash
+*/
+
+declare 
+@days_interval interval = '30 day',
+@country text = ('US');
+	
+	
+with t1 as(
+	select to_char(eventtime, 'yyyy-mm-dd') as day, count(distinct(devtodevid)) as dau
+  from p105094.sessions
+  where eventtime >=current_date - @days_interval and eventtime < current_date
+  --and country = any (@country)
+  group by 1
+	)
+	
+,t2 as(
+	select to_char(eventtime, 'yyyy-mm-dd') as day, count(distinct devtodevid) as "First-time payers"
+	from p105094.payments
+  where eventtime  >=current_date - @days_interval and eventtime < current_date
+  and paymentcount = 1
+	group by 1
+	)
+	
+,t3 as(
+	select t1.day, dau, "First-time payers"
+	from t1 
+	left join t2 using(day)
+	order by 1
+	)
+
+, t4 as(
+  select day,"First-time payers", "First-time payers" *100.0 / dau as "Percentage from DAU" 
+  from t3
+  order by 1
+)	
+
+select * from t4 order by 1;
