@@ -6,13 +6,13 @@ https://demo-analytics.devtodev.com/space/2628/reports/sql/master/346/?type=dash
 
 declare 
 @days_interval interval = '30 day',
-@country text = ('US');
+@country text[] = ARRAY['US','RU'];
 
 with t1 as(
   select to_char(eventtime, 'yyyy-mm-dd') as day, count(distinct(devtodevid)) as dau
   from p105094.sessions
   where eventtime >=current_date - @days_interval and eventtime < current_date
-  --and country in (@country)
+  and country = any (@country)
   group by 1
 ) 
 
