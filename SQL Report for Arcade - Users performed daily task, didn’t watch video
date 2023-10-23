@@ -4,7 +4,6 @@ SQL Report for Arcade - Users performed daily task, didn’t watch video
 https://demo-analytics.devtodev.com/space/2628/reports/sql/master/383/?type=dash
 */
 
-
 declare 
 @day_interval interval = '30 day',
 @country text[] = array['US', 'RU'];
