@@ -1,20 +1,20 @@
 /*
 /*
-SQL Report for 3 in row - DAU vs previous DAU
+SQL Report for Arcade - DAU vs previous DAU
 https://demo-analytics.devtodev.com/space/2628/reports/sql/master/383/?type=dash
 */
 
 declare
-@Interval interval = '7 day',
-@country text = 'US';
+@day_interval interval = '7 day',
+@country text[] = array['US', 'RU'];
 
 with t1 as(
   select eventtime::date, count(distinct devtodevid) as "Number of users"
   , lag(count(distinct devtodevid)) over (order by eventtime::date) as "Users for previous day"
   , round((count(distinct devtodevid)::numeric / (lag(count(distinct devtodevid)) over (order by eventtime::date))::numeric -1)*100, 2) as "vs previous day"
-  from p104704.sessions
-  where eventtime >= current_date - @Interval
-  and country = @country
+  from p105094.sessions
+  where eventtime >= current_date - @day_interval
+  and country = any(@country)
   group by 1
   order by 1
 )
