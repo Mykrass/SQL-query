@@ -1,0 +1,36 @@
+/*
+/*
+SQL Report for Arcade - Users performed daily task, didn’t watch video
+https://demo-analytics.devtodev.com/space/2628/reports/sql/master/383/?type=dash
+*/
+
+
+declare 
+@day_interval interval = '30 day',
+@country text[] = array['US', 'RU'];
+
+with t1 as(
+  select *
+  from p105094."_daily task"
+  where eventtime >= current_date - @day_interval
+    and country = any(@country)
+)
+
+,t2 as(
+  select *
+  from p105094."_rewarded video"
+)
+
+,t3 as(
+  select t1.eventtime::date, count(distinct t1.devtodevid) as "Number of users"
+  , lag(count(distinct t1.devtodevid)) over (order by t1.eventtime::date) as "Users for previous day"
+  , round((count(distinct t1.devtodevid)::numeric / (lag(count(distinct t1.devtodevid)) over (order by t1.eventtime::date))::numeric -1)*100, 2) as "vs previous day"
+  from t1
+  left join t2
+    on t2.devtodevid=t1.devtodevid 
+    and t2.eventtime >= t1.eventtime
+  group by 1
+  order by 1 asc
+)
+
+select * from t3;
