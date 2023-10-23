@@ -13,6 +13,8 @@ with t1 as(
   from p105094."_daily task"
   where eventtime >= current_date - @day_interval
     and country = any(@country)
+    and not tester 
+    and not cheater
 )
 
 ,t2 as(
