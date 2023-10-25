@@ -1,0 +1,40 @@
+/*
+/*
+SQL Report for 3 in row - Main Metrics Union
+https://www.devtodev.com/education/articles/ru/425/sql-dlya-nachinayushtih-osnovnie-metriki-neskolykih-prilozheniy
+*/
+
+declare 
+@day_interval interval = '7 day',
+@payments_count int = 2,
+@item_list text[] = '{"offer1", "offer2", "special offer"}',
+@country text[] = array['US', 'DE', 'RU'];
+ 
+select 'New users ( for ' ||@day_interval|| ')' as "Metric"
+  ,count(distinct devtodevid) as "Value"
+  from p102968.users
+  where created > current_date - @day_interval and created < current_date
+    and country = any (@country)
+ 
+union all
+  select 'Paying users  ( for ' ||@day_interval|| ')'
+  ,count(distinct devtodevid)
+  from p102968.payments
+  where created > current_date - @day_interval and created < current_date
+    and country = any (@country)
+ 
+union all
+  select 'New users paid ' || @payments_count || ' and more times ( for ' ||@day_interval|| ')'
+  ,count(distinct devtodevid)
+  from p102968.payments
+  where created > current_date - @day_interval and created < current_date and paymentcount >=@payments_count
+    and country = any (@country)
+
+union all
+  select 'Gross for new users ( for '||@day_interval||')'
+  ,round(sum(priceusd)::float, 2)
+  from p102968.payments
+  where created > current_date - @day_interval and created < current_date
+    and country = any (@country)
+    
+order by 2 asc;
