@@ -1,56 +1,47 @@
 /*
 /*
-New users by countries
-*/
-/*
-/*
-SQL Report for 3 in row - Main Metrics Union (last 3 month)
+SQL Report for 3 in row - Main Metrics Union
 https://www.devtodev.com/education/articles/ru/425/sql-dlya-nachinayushtih-osnovnie-metriki-neskolykih-prilozheniy
 */
+
 declare 
-@date_from date = '2021-10-12',
-@install_interval interval = '3 month',
+@day_interval interval = '30 day',
 @payments_count int = 2,
-@itemlike text = 'offer%',
-@item_list text[] = '{"offer1", "offer2", "special offer"}';
+@item_list text[] = '{"offer1", "offer2", "special offer"}',
+@country text[] = array['US', 'DE', 'RU'];
  
-select 'New users' as "Metric"
-, count(distinct devtodevid) as "Total"
-from p102968.users
-where created > current_date - @install_interval and created < current_date
- 
-union all
-select 'Paying users'
-, count(distinct devtodevid)
-from p102968.payments
-where created > current_date - @install_interval and created < current_date
+select 'New users for ' ||@day_interval|| '' as "Metric"
+  ,count(distinct devtodevid) as "Value"
+  from p102968.users
+  where created > current_date - @day_interval and created < current_date
+    and country = any (@country)
  
 union all
-select 'Users paid ' || @payments_count || ' and more times'
-, count(distinct devtodevid)
-from p102968.payments
-where created > current_date - @install_interval and created < current_date and paymentcount >=@payments_count
+  select 'Paying users for ' ||@day_interval|| ''
+  ,count(distinct devtodevid)
+  from p102968.payments
+  where created > current_date - @day_interval and created < current_date
+    and country = any (@country)
+ 
+union all
+  select 'Users paid ' || @payments_count || ' and more times in ' ||@day_interval|| ''
+  ,count(distinct devtodevid)
+  from p102968.payments
+  where created > current_date - @day_interval and created < current_date and paymentcount >=@payments_count
+    and country = any (@country)
 
 union all
-select 'Gross'
-, round(sum(priceusd)::float, 2)
-from p102968.payments
-where created > current_date - @install_interval and created < current_date
+  select 'Gross for ' ||@day_interval|| ''
+  ,round(sum(priceusd)::float, 2)
+  from p102968.payments
+  where created > current_date - @day_interval and created < current_date
+    and country = any (@country)
 
 union all
-select 'DAU'
-, count(distinct devtodevid)
-from p102968.sessions
-where created > current_date - interval '1 day'
-
-union all
-select 'WAU'
-, count(distinct devtodevid)
-from p102968.sessions
-where created > current_date - interval '7 day'
-
-union all
-select 'MAU'
-, count(distinct devtodevid)
-from p102968.sessions
-where created > current_date - interval '30 day'
+  select 'DAU'
+  ,count(distinct devtodevid)
+  from p102968.sessions
+  where created > current_date - interval '1 day'
+    and country = any (@country)
+    
+order by 1 asc;
