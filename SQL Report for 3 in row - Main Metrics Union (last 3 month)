@@ -10,38 +10,50 @@ declare
 @item_list text[] = '{"offer1", "offer2", "special offer"}',
 @country text[] = array['US', 'DE', 'RU'];
  
-select 'New users for ' ||@day_interval|| '' as "Metric"
+select 'Paying users  ( for ' ||@day_interval|| ')' as "Metric"
   ,count(distinct devtodevid) as "Value"
-  from p102968.users
-  where created > current_date - @day_interval and created < current_date
-    and country = any (@country)
- 
-union all
-  select 'Paying users for ' ||@day_interval|| ''
-  ,count(distinct devtodevid)
   from p102968.payments
   where created > current_date - @day_interval and created < current_date
-    and country = any (@country)
- 
-union all
-  select 'Users paid ' || @payments_count || ' and more times in ' ||@day_interval|| ''
-  ,count(distinct devtodevid)
-  from p102968.payments
-  where created > current_date - @day_interval and created < current_date and paymentcount >=@payments_count
     and country = any (@country)
 
 union all
-  select 'Gross for ' ||@day_interval|| ''
+  select 'Gross ( for ' ||@day_interval|| ')'
   ,round(sum(priceusd)::float, 2)
   from p102968.payments
-  where created > current_date - @day_interval and created < current_date
+  where eventtime > current_date - @day_interval and eventtime < current_date
     and country = any (@country)
-
+    
+    
 union all
-  select 'DAU'
+  select 'MAU'
   ,count(distinct devtodevid)
   from p102968.sessions
-  where created > current_date - interval '1 day'
+  where eventtime > current_date - interval '30 day' and eventtime < current_date
+    and country = any (@country) 
+    
+union all
+
+  select 'ARPPU  ( for ' ||@day_interval|| ')'
+  --,round(daily_revenue.rev / daily_revenue.payed_users, 2) as "ARPPU"
+  ,round(sum(priceusd)::float / count(distinct devtodevid), 2) 
+  from p102968.payments
+  where eventtime > current_date - @day_interval and eventtime < current_date
+    and country = any (@country)
+    
+union all
+
+  select 'ARPU  ( for ' ||@day_interval|| ')'
+  ,round(daily_revenue.rev / daily_players.players, 3) as "ARPU"
+  from p102968.payments
+  where eventtime > current_date - @day_interval and eventtime < current_date
+    and country = any (@country)
+    
+union all
+
+  select 'PAYING SHARE, %  ( for ' ||@day_interval|| ')'
+    ,round(100 * median("ARPU") / median("ARPPU"), 2) as "PAYING SHARE, %"
+  from p102968.payments
+  where eventtime > current_date - @day_interval and eventtime < current_date
     and country = any (@country)
     
 order by 1 asc;
