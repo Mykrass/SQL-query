@@ -5,31 +5,31 @@ https://www.devtodev.com/education/articles/ru/425/sql-dlya-nachinayushtih-osnov
 */
 
 declare 
-@day_interval interval = '30 day',
+@day_interval interval = '7 day',
 @payments_count int = 2,
 @item_list text[] = '{"offer1", "offer2", "special offer"}',
 @country text[] = array['US', 'DE', 'RU'];
- 
-select 'Paying users  ( for ' ||@day_interval|| ')' as "Metric"
-  ,count(distinct devtodevid) as "Value"
-  from p102968.payments
-  where created > current_date - @day_interval and created < current_date
-    and country = any (@country)
 
+select 'MAU for ' ||@country::text||''  as "Metric"
+  ,count(distinct devtodevid)  as "Value"
+  from p102968.sessions
+  where eventtime > current_date - interval '30 day' and eventtime < current_date
+    and country = any (@country) 
+    
 union all
-  select 'Gross ( for ' ||@day_interval|| ')'
-  ,round(sum(priceusd)::float, 2)
+  select 'DAU for ' ||@country::text||''  as "Metric"
+  ,count(distinct devtodevid)  as "Value"
+  from p102968.sessions
+  where eventtime > current_date - interval '1 day' and eventtime < current_date
+    and country = any (@country) 
+   
+union all    
+  select 'Gross ( for ' ||@day_interval|| ')'  as "Metric"
+  ,round(sum(priceusd)::float, 2) as "Value"
   from p102968.payments
   where eventtime > current_date - @day_interval and eventtime < current_date
     and country = any (@country)
     
-    
-union all
-  select 'MAU'
-  ,count(distinct devtodevid)
-  from p102968.sessions
-  where eventtime > current_date - interval '30 day' and eventtime < current_date
-    and country = any (@country) 
     
 union all
 
@@ -40,6 +40,17 @@ union all
   where eventtime > current_date - @day_interval and eventtime < current_date
     and country = any (@country)
     
+union all
+
+  select  'First-time payers  ( for ' ||@day_interval|| ')'
+      ,count(distinct devtodevid) filter(where  paymentcount = 1 ) as "First-time payers"
+  -- ,count(distinct devtodevid) as "Total number of payers" 
+  from p105094.payments
+  where eventtime  >=current_date - @day_interval and eventtime < current_date
+  and country = any (@country)
+
+/*
+/*    
 union all
 
   select 'ARPU  ( for ' ||@day_interval|| ')'
@@ -57,3 +68,4 @@ union all
     and country = any (@country)
     
 order by 1 asc;
+*/
