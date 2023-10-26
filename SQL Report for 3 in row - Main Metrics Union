@@ -68,15 +68,17 @@ union all
 
   select 'ARPU  ( for ' ||@day_interval|| ')'
   --,round(daily_revenue.rev / daily_players.players, 3) as "ARPU"
-  ,round(sum(sbspaymentsum) / count(distinct devtodevid), 2) as "ARPU"
-  from p102968.sessions
-  where eventtime > current_date - @day_interval and eventtime < current_date
-    and country = any (@country)
+  ,round((sum(p.priceusd) / count(distinct s.devtodevid)), 2)  as "ARPU"
+  from p105094.sessions s
+  left join p105094.payments p 
+  using(devtodevid)
+  where s.eventtime > current_date - @day_interval and s.eventtime < current_date
+    and s.country = any (@country)
     
 union all
 
   select 'PAYING SHARE, %  ( for ' ||@day_interval|| ')'
-  ,round(100 * (sum(s.sbspaymentsum) / count(distinct s.devtodevid)) / (sum(p.priceusd)::float / count(distinct p.devtodevid)), 2) as "PAYING SHARE, %"
+  ,round(100 * (sum(p.priceusd) / count(distinct s.devtodevid)) / (sum(p.priceusd)::float / count(distinct p.devtodevid)), 2) as "PAYING SHARE, %"
   from p105094.sessions s
   left join p105094.payments p using(devtodevid)
   where s.eventtime > current_date - @day_interval and s.eventtime < current_date
