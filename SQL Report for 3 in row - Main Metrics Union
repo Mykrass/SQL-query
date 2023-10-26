@@ -10,17 +10,17 @@ declare
 @item_list text[] = '{"offer1", "offer2", "special offer"}',
 @country text[] = array['US', 'DE', 'RU'];
 
-select 'MAU for ' ||@country::text||''  as "Metric"
-  ,count(distinct devtodevid)  as "Value"
-  from p102968.sessions
-  where eventtime > current_date - interval '30 day' and eventtime < current_date
-    and country = any (@country) 
-    
-union all
-  select 'DAU for ' ||@country::text||''  as "Metric"
+select 'DAU for ' ||@country::text||''  as "Metric"
   ,count(distinct devtodevid)  as "Value"
   from p102968.sessions
   where eventtime > current_date - interval '1 day' and eventtime < current_date
+    and country = any (@country) 
+    
+union all
+  select 'MAU for ' ||@country::text||''  as "Metric"
+  ,count(distinct devtodevid)  as "Value"
+  from p102968.sessions
+  where eventtime > current_date - interval '30 day' and eventtime < current_date
     and country = any (@country) 
    
 union all    
@@ -42,7 +42,7 @@ union all
   select  'First-time payers  ( for ' ||@day_interval|| ')'
       ,count(distinct devtodevid) filter(where  paymentcount = 1 ) as "First-time payers"
   -- ,count(distinct devtodevid) as "Total number of payers" 
-  from p105094.payments
+  from p102968.payments
   where eventtime  >=current_date - @day_interval and eventtime < current_date
   and country = any (@country)
     
@@ -50,22 +50,23 @@ union all
 
   select 'ARPPU  ( for ' ||@day_interval|| ')'
   --,round(daily_revenue.rev / daily_revenue.payed_users, 2) as "ARPPU"
-  ,round(sum(priceusd)::float / count(distinct devtodevid), 2) 
+  ,round(sum(priceusd)::float / count(distinct devtodevid), 2)  as "ARPPU"
   from p102968.payments
   where eventtime > current_date - @day_interval and eventtime < current_date
     and country = any (@country)
     
 
-/*
-/*    
+   
 union all
 
   select 'ARPU  ( for ' ||@day_interval|| ')'
-  ,round(daily_revenue.rev / daily_players.players, 3) as "ARPU"
-  from p102968.payments
+  --,round(daily_revenue.rev / daily_players.players, 3) as "ARPU"
+  ,round(sum(sbspaymentsum) / count(distinct devtodevid), 2) as "ARPU"
+  from p102968.sessions
   where eventtime > current_date - @day_interval and eventtime < current_date
     and country = any (@country)
-    
+/*
+/*     
 union all
 
   select 'PAYING SHARE, %  ( for ' ||@day_interval|| ')'
