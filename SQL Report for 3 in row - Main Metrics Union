@@ -24,12 +24,27 @@ union all
     and country = any (@country) 
    
 union all    
-  select 'Gross ( for ' ||@day_interval|| ')'  as "Metric"
-  ,round(sum(priceusd)::float, 2) as "Value"
+  select 'Revenue excluding commission 30% ( for ' ||@day_interval|| ')'  as "Metric"
+  ,round(sum(priceusd)*0.7, 2) as revenue 
   from p102968.payments
   where eventtime > current_date - @day_interval and eventtime < current_date
     and country = any (@country)
+
+union all    
+  select 'Goods purchases ( for ' ||@day_interval|| ')'  as "Metric"
+  ,count(eventtime) as purchases 
+  from p102968.payments
+  where eventtime > current_date - @day_interval and eventtime < current_date
+    and country = any (@country)  
     
+union all
+
+  select  'First-time payers  ( for ' ||@day_interval|| ')'
+      ,count(distinct devtodevid) filter(where  paymentcount = 1 ) as "First-time payers"
+  -- ,count(distinct devtodevid) as "Total number of payers" 
+  from p105094.payments
+  where eventtime  >=current_date - @day_interval and eventtime < current_date
+  and country = any (@country)
     
 union all
 
@@ -40,14 +55,6 @@ union all
   where eventtime > current_date - @day_interval and eventtime < current_date
     and country = any (@country)
     
-union all
-
-  select  'First-time payers  ( for ' ||@day_interval|| ')'
-      ,count(distinct devtodevid) filter(where  paymentcount = 1 ) as "First-time payers"
-  -- ,count(distinct devtodevid) as "Total number of payers" 
-  from p105094.payments
-  where eventtime  >=current_date - @day_interval and eventtime < current_date
-  and country = any (@country)
 
 /*
 /*    
