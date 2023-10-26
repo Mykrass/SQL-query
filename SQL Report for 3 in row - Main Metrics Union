@@ -15,6 +15,15 @@ select 'DAU for ' ||@country::text||''  as "Metric"
   from p102968.sessions
   where eventtime > current_date - interval '1 day' and eventtime < current_date
     and country = any (@country) 
+
+union all
+  select 'Paying percentage from DAU, %' 
+   --,"Number of payments" * 100.0 /dau as "Percentage from DAU" 
+  ,round(count(distinct p.devtodevid) * 100.0 / count(distinct s.devtodevid), 2) as "Percentage from DAU"
+  from p105094.sessions s
+  left join p105094.payments p using(devtodevid)
+  where s.eventtime > current_date - interval '1 day' and s.eventtime < current_date
+    and s.country = any (@country)
     
 union all
   select 'MAU for ' ||@country::text||''  as "Metric"
@@ -54,8 +63,6 @@ union all
   from p102968.payments
   where eventtime > current_date - @day_interval and eventtime < current_date
     and country = any (@country)
-    
-
    
 union all
 
@@ -65,15 +72,12 @@ union all
   from p102968.sessions
   where eventtime > current_date - @day_interval and eventtime < current_date
     and country = any (@country)
-/*
-/*     
+    
 union all
 
   select 'PAYING SHARE, %  ( for ' ||@day_interval|| ')'
-    ,round(100 * median("ARPU") / median("ARPPU"), 2) as "PAYING SHARE, %"
-  from p102968.payments
-  where eventtime > current_date - @day_interval and eventtime < current_date
-    and country = any (@country)
-    
-order by 1 asc;
-*/
+  ,round(100 * (sum(s.sbspaymentsum) / count(distinct s.devtodevid)) / (sum(p.priceusd)::float / count(distinct p.devtodevid)), 2) as "PAYING SHARE, %"
+  from p105094.sessions s
+  left join p105094.payments p using(devtodevid)
+  where s.eventtime > current_date - @day_interval and s.eventtime < current_date
+    and s.country = any (@country)
