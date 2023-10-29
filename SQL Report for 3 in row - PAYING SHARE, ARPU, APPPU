@@ -1,0 +1,42 @@
+/*
+/*
+SQL Report for 3 in row - PAYING SHARE, ARPU, APPPU
+https://www.devtodev.com/education/articles/ru/425/sql-dlya-nachinayushtih-osnovnie-metriki-neskolykih-prilozheniy
+*/
+
+declare 
+@day_interval interval = '7 day',
+@country text[] = array['US', 'DE', 'RU'];
+
+with t1 as(
+  select eventtime::date as "dt"
+    ,count(distinct devtodevid) as "payed_users"
+    ,sum(priceusd) as "revenue"
+  from p105094.payments 
+  where eventtime > current_date - @day_interval and eventtime < current_date
+  --and country = any (@country)
+  group by 1
+  order by 1
+)
+
+,t2 as(
+  select eventtime::date as "dt"
+    ,count(distinct devtodevid) as "users"
+  from p105094.sessions
+  where eventtime > current_date - @day_interval and eventtime < current_date
+  --and country = any (@country)
+  group by 1
+  order by 1
+)
+
+,t3 as(
+  select dt as "Date"
+    ,round(payed_users * 100.0 / users, 2) as "PAYING SHARE, %"
+    ,round(revenue/users, 2) as "ARPU"
+    ,round(revenue/payed_users, 2) as "APRRU"
+  from t1
+  join t2
+  using(dt)
+)
+
+select * from t3 order by 1;
