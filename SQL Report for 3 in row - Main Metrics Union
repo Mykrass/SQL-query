@@ -10,34 +10,70 @@ declare
 @item_list text[] = '{"offer1", "offer2", "special offer"}',
 @country text[] = array['US', 'DE', 'RU'];
 
+select 'MAU for ' ||@country::text||''  as "Metric"
+  ,count(distinct devtodevid)  as "Value"
+  from p102968.sessions
+  where eventtime > current_date - interval '30 day' and eventtime < current_date
+    and country = any (@country) 
+    
+union all    
 select 'DAU for ' ||@country::text||''  as "Metric"
   ,count(distinct devtodevid)  as "Value"
   from p102968.sessions
   where eventtime > current_date - interval '1 day' and eventtime < current_date
     and country = any (@country) 
+    
+union all
+  select 'PAYING SHARE MAU, %' 
+  --,"Number of payments" * 100.0 /dau as "Percentage from DAU" 
+  --,round(count(distinct p.devtodevid) * 100.0 / count(distinct s.devtodevid), 2) as "Percentage from DAU"
+  ,round(count(distinct p.devtodevid) * 100.0 / count(distinct s.devtodevid), 2) as "PAYING SHARE DAU, %"
+  from p105094.sessions s
+  left join p105094.payments p using(devtodevid)
+  where s.eventtime > current_date - interval '1 month' and s.eventtime < current_date
+    and s.country = any (@country)
 
 union all
-  select 'Paying percentage from DAU, %' 
-   --,"Number of payments" * 100.0 /dau as "Percentage from DAU" 
-  ,round(count(distinct p.devtodevid) * 100.0 / count(distinct s.devtodevid), 2) as "Percentage from DAU"
+  select 'PAYING SHARE DAU, %' 
+  --,"Number of payments" * 100.0 /dau as "Percentage from DAU" 
+  --,round(count(distinct p.devtodevid) * 100.0 / count(distinct s.devtodevid), 2) as "Percentage from DAU"
+  ,round(count(distinct p.devtodevid) * 100.0 / count(distinct s.devtodevid), 2) as "PAYING SHARE DAU, %"
   from p105094.sessions s
   left join p105094.payments p using(devtodevid)
   where s.eventtime > current_date - interval '1 day' and s.eventtime < current_date
     and s.country = any (@country)
     
-union all
-  select 'MAU for ' ||@country::text||''  as "Metric"
-  ,count(distinct devtodevid)  as "Value"
-  from p102968.sessions
-  where eventtime > current_date - interval '30 day' and eventtime < current_date
-    and country = any (@country) 
-   
 union all    
-  select 'Revenue excluding commission 30% ( for ' ||@day_interval|| ')'  as "Metric"
+  select 'REVENUE -30%, MAU '  as "Metric"
   ,round(sum(priceusd)*0.7, 2) as revenue 
   from p102968.payments
-  where eventtime > current_date - @day_interval and eventtime < current_date
+  where eventtime > current_date - interval '1 month' and eventtime < current_date
     and country = any (@country)
+    
+union all    
+  select 'REVENUE -30%, DAU '  as "Metric"
+  ,round(sum(priceusd)*0.7, 2) as revenue 
+  from p102968.payments
+  where eventtime > current_date - interval '1 day' and eventtime < current_date
+    and country = any (@country)
+
+union all
+  select 'Payed users % ( for ' ||@day_interval|| ')'
+    --,round(count(distinct p.devtodevid) * 100.0 / count(distinct s.devtodevid), 2) as "Percentage from DAU"
+  ,round(count(distinct p.devtodevid) * 100.0 / count(distinct s.devtodevid), 2) as "Percentage users"
+  from p105094.sessions s
+  left join p105094.payments p using(devtodevid)
+  where s.eventtime > current_date - @day_interval and s.eventtime < current_date
+    and s.country = any (@country)
+
+    
+union all
+  select  'First-time payers  ( for ' ||@day_interval|| ')'
+      ,count(distinct devtodevid) filter(where  paymentcount = 1 ) as "First-time payers"
+  -- ,count(distinct devtodevid) as "Total number of payers" 
+  from p102968.payments
+  where eventtime  >=current_date - @day_interval and eventtime < current_date
+  and country = any (@country)
 
 union all    
   select 'Goods purchases ( for ' ||@day_interval|| ')'  as "Metric"
@@ -46,40 +82,9 @@ union all
   where eventtime > current_date - @day_interval and eventtime < current_date
     and country = any (@country)  
     
-union all
-
-  select  'First-time payers  ( for ' ||@day_interval|| ')'
-      ,count(distinct devtodevid) filter(where  paymentcount = 1 ) as "First-time payers"
-  -- ,count(distinct devtodevid) as "Total number of payers" 
-  from p102968.payments
-  where eventtime  >=current_date - @day_interval and eventtime < current_date
-  and country = any (@country)
-    
-union all
-
-  select 'ARPPU  ( for ' ||@day_interval|| ')'
-  --,round(daily_revenue.rev / daily_revenue.payed_users, 2) as "ARPPU"
-  ,round(sum(priceusd)::float / count(distinct devtodevid), 2)  as "ARPPU"
+union all    
+  select 'Revenue excluding commission 30% ( for ' ||@day_interval|| ')'  as "Metric"
+  ,round(sum(priceusd)*0.7, 2) as revenue 
   from p102968.payments
   where eventtime > current_date - @day_interval and eventtime < current_date
     and country = any (@country)
-   
-union all
-
-  select 'ARPU  ( for ' ||@day_interval|| ')'
-  --,round(daily_revenue.rev / daily_players.players, 3) as "ARPU"
-  ,round((sum(p.priceusd) / count(distinct s.devtodevid)), 2)  as "ARPU"
-  from p105094.sessions s
-  left join p105094.payments p 
-  using(devtodevid)
-  where s.eventtime > current_date - @day_interval and s.eventtime < current_date
-    and s.country = any (@country)
-    
-union all
-
-  select 'PAYING SHARE, %  ( for ' ||@day_interval|| ')'
-  ,round(100 * (sum(p.priceusd) / count(distinct s.devtodevid)) / (sum(p.priceusd)::float / count(distinct p.devtodevid)), 2) as "PAYING SHARE, %"
-  from p105094.sessions s
-  left join p105094.payments p using(devtodevid)
-  where s.eventtime > current_date - @day_interval and s.eventtime < current_date
-    and s.country = any (@country)
