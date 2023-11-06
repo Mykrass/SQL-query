@@ -1,6 +1,6 @@
 /*
 /*
-SQL Report for 3 in row - ARPU, PAYING SHARE, APPPU
+SQL Report for 3 in row - APPPU = ARPU/PAYING SHARE
 https://www.devtodev.com/education/articles/ru/425/sql-dlya-nachinayushtih-osnovnie-metriki-neskolykih-prilozheniy
 */
 
