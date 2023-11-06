@@ -1,7 +1,8 @@
 /*
 /*
-SQL Report for 3 in row - ARPU, ARPPU Metrics Union
+SQL Report for 3 in row - Metrics Union ARPDAU, ARPMAU, ARPPDAU, ARPPMAU
 https://www.devtodev.com/education/articles/ru/425/sql-dlya-nachinayushtih-osnovnie-metriki-neskolykih-prilozheniy
+https://www.carrotquest.io/blog/arpu/
 */
 
 declare 
