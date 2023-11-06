@@ -1,12 +1,11 @@
 /*
 /*
-SQL Report for 3 in row - Metrics Union ARPDAU, ARPMAU, ARPPDAU, ARPPMAU
+SQL Report for 3 in row - Metrics Union ARPDAU, ARPPDAU
 https://www.devtodev.com/education/articles/ru/425/sql-dlya-nachinayushtih-osnovnie-metriki-neskolykih-prilozheniy
 https://www.carrotquest.io/blog/arpu/
 */
 
 declare 
-@day_interval interval = '30 day',
 @country text[] = array['US', 'DE', 'RU'];
 
 with t1 as(
@@ -14,7 +13,7 @@ with t1 as(
     ,count(distinct devtodevid) as "payed_users"
     ,sum(priceusd) as "revenue"
   from p105094.payments 
-  where eventtime > current_date - @day_interval and eventtime < current_date
+  where eventtime > current_date - interval '1 day' and eventtime < current_date
   and country = any (@country)
   group by 1
   order by 1
@@ -24,7 +23,7 @@ with t1 as(
   select eventtime::date as "dt"
     ,count(distinct devtodevid) as "users"
   from p105094.sessions
-  where eventtime > current_date - @day_interval
+  where eventtime > current_date - interval '1 day' and eventtime < current_date
   and country = any (@country)
   group by 1
   order by 1
@@ -39,15 +38,15 @@ with t1 as(
   using(dt)
 )
 
-  select 'ARPU  ( for ' ||@day_interval|| ')' as "Metric"
-      ,round(avg(revenue/users), 2) as "Value"
+select 'ARPDAU' as "Metric"
+      ,'$'||round(avg(revenue/users), 2)||' (Average revenue per daily active user)' as "Value"
   from t1
   join t2
   using(dt)
   
 union all  
-    select 'ARPPU  ( for ' ||@day_interval|| ')'  as "Metric"
-      ,round(avg(revenue/payed_users), 2) as "Value"
+    select 'ARPPDAU'  as "Metric"
+      ,'$'||round(avg(revenue/payed_users), 2)||' (Average revenue per daily active payed user)' as "Value"
   from t1
   join t2
   using(dt)
