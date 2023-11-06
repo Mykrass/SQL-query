@@ -1,6 +1,6 @@
 /*
 /*
-SQL Report for 3 in row - PAYING SHARE, ARPU, APPPU
+SQL Report for 3 in row - ARPU, PAYING SHARE, APPPU
 https://www.devtodev.com/education/articles/ru/425/sql-dlya-nachinayushtih-osnovnie-metriki-neskolykih-prilozheniy
 */
 
@@ -31,9 +31,12 @@ with t1 as(
 
 ,t3 as(
   select dt as "Date"
-    ,round(payed_users * 100.0 / users, 2) as "PAYING SHARE, %"
-    ,round(revenue/users, 2) as "ARPU"
-    ,round(revenue/payed_users, 2) as "APRRU"
+    --,round(revenue/users, 2) as "ARPU"
+    --,round(payed_users * 100.0 / users, 2) as "PAYING SHARE, %"
+    --,round(revenue/payed_users, 2) as "APRRU"
+    ,'$'||round(revenue/users, 2)||'' as "ARPU"
+    ,''||round(payed_users * 100.0 / users, 2)||'%' as "PAYING SHARE"
+    ,'$'||round((revenue/users) / (payed_users*1.0/users), 2)||'' as "ARPPU= ARPU / PAYING_SHARE"
   from t1
   join t2
   using(dt)
