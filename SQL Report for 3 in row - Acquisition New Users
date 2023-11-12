@@ -23,7 +23,6 @@ with t1 as(
     ,count(distinct devtodevid) as "Payid new users"
   from p102968.payments
   where created > current_date - @day_interval and created < current_date
-    --and publisher = 'Organic'
     --and country = any (@country)
   group by 1
 )
