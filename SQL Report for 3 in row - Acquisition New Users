@@ -5,10 +5,19 @@ https://www.devtodev.com/education/articles/ru/425/sql-dlya-nachinayushtih-osnov
 */
 
 declare 
-@day_interval interval = '30 day',
+@day_interval interval = '7 day',
 @country text[] = array['US', 'DE', 'RU'];
 
 with t1 as(
+  select created::date as dt
+    ,count(distinct devtodevid) as "New users"
+  from p102968.users
+  where created > current_date - @day_interval and created < current_date
+    --and country = any (@country)
+  group by 1
+) 
+
+,t2 as(
   select created::date as dt
     ,count(distinct devtodevid) as "Organic new users"
   from p102968.users
@@ -16,9 +25,9 @@ with t1 as(
     and publisher = 'Organic'
     --and country = any (@country)
   group by 1
-) 
+)
 
-,t2 as(
+,t3 as(
   select created::date as dt
     ,count(distinct devtodevid) as "Payid new users"
   from p102968.payments
@@ -27,12 +36,28 @@ with t1 as(
   group by 1
 )
 
-,t3 as(
-  select t1.dt as "Date"
-    ,t1."Organic new users"
-    ,t2."Payid new users"
-  from t1
-  join t2 using(dt)
+,t4 as(
+  select created::date as dt
+    ,count(distinct p.devtodevid) as "Payid new organic users"
+  from p102968.payments p
+  join p102968.users using(created)
+  where created > current_date - @day_interval and created < current_date
+    and publisher = 'Organic'
+    --and country = any (@country)
+  group by 1
 )
 
-select * from t3 order by 1;
+,t5 as(
+  select t1.dt as "Date"
+    ,"New users"
+    ,''||round("Payid new users" * 100.0 / "New users", 2)||'%' as "Paying Share"
+    ,"Payid new users"
+    ,"Payid new organic users"
+    ,''||round("Payid new organic users" * 100.0 / "Payid new users", 2)||'%' as "Organic Paying Share"
+  from t1
+  join t2 using(dt)
+  join t3 using(dt)
+  join t4 using(dt)
+)
+
+select * from t5 order by 1;
