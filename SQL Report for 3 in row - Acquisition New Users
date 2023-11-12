@@ -1,0 +1,40 @@
+/*
+/*
+SQL Report for 3 in row - Acquisition New users
+https://www.devtodev.com/education/articles/ru/425/sql-dlya-nachinayushtih-osnovnie-metriki-neskolykih-prilozheniy
+*/
+
+declare 
+@day_interval interval = '30 day',
+@payments_count int = 2,
+@country text[] = array['US', 'DE', 'RU'];
+
+with t1 as(
+  select created::date as dt
+    ,count(distinct devtodevid) as "Organic new users"
+  from p102968.users
+  where created > current_date - @day_interval and created < current_date
+    and publisher = 'Organic'
+    --and country = any (@country)
+  group by 1
+) 
+
+,t2 as(
+  select created::date as dt
+    ,count(distinct devtodevid) as "Payid new users"
+  from p102968.payments
+  where created > current_date - @day_interval and created < current_date
+    --and publisher = 'Organic'
+    --and country = any (@country)
+  group by 1
+)
+
+,t3 as(
+  select t1.dt as "Date"
+    ,t1."Organic new users"
+    ,t2."Payid new users"
+  from t1
+  join t2 using(dt)
+)
+
+select * from t3 order by 1;
