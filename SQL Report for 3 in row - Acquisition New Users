@@ -6,7 +6,6 @@ https://www.devtodev.com/education/articles/ru/425/sql-dlya-nachinayushtih-osnov
 
 declare 
 @day_interval interval = '30 day',
-@payments_count int = 2,
 @country text[] = array['US', 'DE', 'RU'];
 
 with t1 as(
