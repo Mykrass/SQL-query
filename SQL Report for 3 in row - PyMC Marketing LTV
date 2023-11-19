@@ -1,6 +1,6 @@
 /*
 /*
-SQL Report for 3 in row - PyMC Marketing LTV
+SQL Report for Arkade - PyMC Marketing LTV
 https://colab.research.google.com/drive/16XcUiRgTFF9eGs0Tc6iJ3mpFS7ue075y
 */
 
@@ -15,7 +15,7 @@ with t1 as(
     ,item
     ,itemtype
     ,sessionid
-  from p102968.purchases
+  from p105094.purchases
   where created > current_date - @Interval and created < current_date
   --and country = any (@country)
   order by 1
@@ -29,7 +29,7 @@ with t1 as(
     ,country
     ,paymentid
     ,priceusd
-  from p102968.payments
+  from p105094.payments
   where created > current_date - @Interval and created < current_date
   --and country = any (@country)
   order by 1
@@ -38,13 +38,13 @@ with t1 as(
 ,t3 as(
   select 
     t1.dt as "InvoiceDate"
-    ,t1.devtodevid::numeric as "CustomerID"
-    ,t2.paymentid::numeric as "InvoiceNo"
+    ,t1.devtodevid as "CustomerID"
+    ,t2.paymentid as "InvoiceNo"
     ,t1.item as "StockCode"
     ,t1.itemtype as "Description"
     ,t2.country as "Country"
-    ,sum(t2.priceusd)::float as "UnitPrice"
-    ,count(t2.priceusd)::int as "Quantity"
+    ,sum(t2.priceusd) as "UnitPrice"
+    ,count(t2.priceusd) as "Quantity"
   from t1
   join t2 using(dt, devtodevid)
   group by 1, 2, 3, 4, 5, 6
