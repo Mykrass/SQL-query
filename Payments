@@ -1,0 +1,16 @@
+select sum(sub.payments_num) as "Payments" from
+(select  count(paymentid) as payments_num
+from p102968.payments p
+where eventtime >= current_date - interval '30 days' 
+UNION all
+select   count(paymentid) as payments_num
+from p104704.payments p
+where eventtime >= current_date - interval '30 days' 
+UNION all
+select  count(paymentid) as payments_num
+from p105094.payments p
+where eventtime >= current_date - interval '30 days' 
+UNION all
+select  count(paymentid) as payments_num
+from p105095.payments p
+where eventtime >= current_date - interval '30 days' ) sub
