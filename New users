@@ -1,0 +1,16 @@
+select sum(new_users) as "New users" from 
+(select count(distinct devtodevid) as new_users
+from p102968.users u
+where created >= current_date - interval '30 days' 
+union all
+select count(distinct devtodevid) as new_users
+from p104704.users u
+where created >= current_date - interval '30 days' 
+union all
+select count(distinct devtodevid) as new_users
+from p105094.users u
+where created >= current_date - interval '30 days' 
+union all
+select count(distinct devtodevid) as new_users
+from p105095.users u
+where created >= current_date - interval '30 days' ) sub 
