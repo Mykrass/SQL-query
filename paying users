@@ -1,0 +1,16 @@
+select sum(users) as "Paying users" from
+(select count( distinct (devtodevid)) as users
+from p102968.payments p
+where eventtime >= current_date - interval '30 days' 
+UNION all
+select count( distinct (devtodevid)) as users
+from p104704.payments p
+where eventtime >= current_date - interval '30 days' 
+UNION all
+select count( distinct (devtodevid)) as users
+from p105094.payments p
+where eventtime >= current_date - interval '30 days' 
+UNION all
+select count( distinct (devtodevid)) as users
+from p105095.payments p
+where eventtime >= current_date - interval '30 days' ) sub
