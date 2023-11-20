@@ -1,0 +1,13 @@
+select to_char(eventtime, 'yyyy-mm-dd') as day
+, count(eventtime) filter (where product = 'new offer') as new_offer
+, count(eventtime) filter (where product = 'offer_1') as offer_1
+, count(eventtime) filter (where product = 'offer4') as offer_4
+, count(eventtime) filter (where product = 'special offer') as special_offer
+, count(eventtime) filter (where product = 'popular offer') as popular_offer
+from p105094.payments p
+where eventtime >=current_date - @Interval and eventtime < current_date
+and country = any (@country)
+and tester is false
+and paymentcount = 1
+group by 1
+order by 1 asc
