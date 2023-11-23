@@ -1,0 +1,13 @@
+declare
+@period interval = '11.10.2023-15.10.2023'
+
+with t1 as(
+  select name, count(eventtime) as events, count(distinct devtodevid) as users
+  from p102968.custom_events  
+  where eventtime >= @period.from 
+  and created >= @period.from and created < @period.to
+  group by 1
+  order by 2 desc
+)
+
+select * from t1;
