@@ -1,0 +1,11 @@
+select country
+, count(distinct devtodevid) as "Paying users",
+'$'||round((sum(priceusd)/count(distinct devtodevid))::numeric,2)||'per paying user' as "ARPPU"  
+from p102968.payments
+where eventtime>=current_date - interval '1 month' 
+and eventtime < current_date  
+and tester is false  
+and cheater is false  
+group by country
+order by "Paying users" desc
+limit 5 
