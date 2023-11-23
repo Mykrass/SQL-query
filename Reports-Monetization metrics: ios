@@ -1,0 +1,13 @@
+select to_char(eventtime, 'YYYY-mm-dd') as day
+, sum(priceusd) as "Gross"
+, count(devtodevid) as "Transactions"
+,count(distinct devtodevid) as "Paying users"
+,avg(priceusd) as "Average check"
+,sum(priceusd)/(count(distinct devtodevid)) as "ARPPU"  
+from p102968.payments
+where eventtime>=current_date - interval '1 month'
+and eventtime < current_date 
+and tester is false
+and cheater is false
+group by 1
+order by 1 asc
