@@ -521,8 +521,8 @@ CREATE TABLE reference
 DROP TABLE WMsales;
 CREATE TABLE WMsales
   ( 
-    invoice_id text Not null primary Key,
-	  branch text not null,
+    invoice_id text not null primary Key,
+    branch text not null,
     city text not null,
     customer_type text not null,
     gender  text not null,
@@ -532,12 +532,12 @@ CREATE TABLE WMsales
     VAT float not null,
     total float not null,
     date timestamp without time zone,
-    time timestamp without time zone,
+    time text not null,
     payment_method text  not null,
-    cogs  decimal float not null,
-    gross_margin_pct float,
+    cogs float not null,
+    gross_margin_pct float not null,
     gross_income float not null,
-    rating float
+    rating float not null
 );
 
-\COPY reference FROM '/Users/mykras/Downloads/WalmartSalesData.csv' DELIMITER ',' CSV HEADER;
+\COPY WMsales FROM '/Users/mykras/Downloads/WalmartSalesData.csv' DELIMITER ',' CSV HEADER;
