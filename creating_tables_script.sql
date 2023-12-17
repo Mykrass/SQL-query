@@ -517,9 +517,9 @@ CREATE TABLE reference
 
 \COPY reference FROM '/Users/mykras/Downloads/bikeride.csv' DELIMITER ',' CSV HEADER;
 
-
-DROP TABLE WMsales;
-CREATE TABLE WMsales
+--- https://github.com/ZainabMCheema/DataAnalystProject.git
+DROP TABLE wmsales;
+CREATE TABLE wmsales
   ( 
     invoice_id text not null primary Key,
     branch text not null,
@@ -529,7 +529,7 @@ CREATE TABLE WMsales
     product_line text not null,
     unit_price  float not null,
     quantity int not null,
-    VAT float not null,
+    vat float not null,
     total float not null,
     date timestamp without time zone,
     time text not null,
@@ -540,4 +540,4 @@ CREATE TABLE WMsales
     rating float not null
 );
 
-\COPY WMsales FROM '/Users/mykras/Downloads/WalmartSalesData.csv' DELIMITER ',' CSV HEADER;
+\COPY wmsales FROM '/Users/mykras/Downloads/WalmartSalesData.csv' DELIMITER ',' CSV HEADER;
