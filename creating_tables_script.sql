@@ -545,6 +545,7 @@ CREATE TABLE wmsales
 
 --- https://github.com/ZainabMCheema/DataAnalystProject.git
 -- step 2
+-- time of day
 	alter table wmsales add column time_of_day text;
 	update wmsales
 	set time_of_day= (
@@ -554,3 +555,9 @@ CREATE TABLE wmsales
 			 else 'Evening'
     	end)
 );
+
+-- step 3
+--  Month_name
+	alter table wmsales add column month_name text;
+	update  wmsales
+	set month_name= TO_CHAR(date, 'Month');
