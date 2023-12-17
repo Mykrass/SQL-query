@@ -518,6 +518,7 @@ CREATE TABLE reference
 \COPY reference FROM '/Users/mykras/Downloads/bikeride.csv' DELIMITER ',' CSV HEADER;
 
 --- https://github.com/ZainabMCheema/DataAnalystProject.git
+-- step 1
 DROP TABLE wmsales;
 CREATE TABLE wmsales
   ( 
@@ -543,6 +544,7 @@ CREATE TABLE wmsales
 \COPY wmsales FROM '/Users/mykras/Downloads/WalmartSalesData.csv' DELIMITER ',' CSV HEADER;
 
 --- https://github.com/ZainabMCheema/DataAnalystProject.git
+-- step 2
 	alter table wmsales add column time_of_day text;
 	update wmsales
 	set time_of_day= (
