@@ -553,8 +553,7 @@ CREATE TABLE wmsales
 			 when time between '08:00:00' and '12:00:00' then 'Morning'
 			 when time between '12:00:00' and '18:00:00' then 'Afternoon'
 			 else 'Evening'
-    	end)
-);
+    	end);
 
 -- step 3
 --  Month_name
