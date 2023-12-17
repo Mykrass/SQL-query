@@ -541,3 +541,14 @@ CREATE TABLE wmsales
 );
 
 \COPY wmsales FROM '/Users/mykras/Downloads/WalmartSalesData.csv' DELIMITER ',' CSV HEADER;
+
+--- https://github.com/ZainabMCheema/DataAnalystProject.git
+	alter table wmsales add column time_of_day text;
+	update wmsales
+	set time_of_day= (
+		case 
+			 when time between '08:00:00' and '12:00:00' then 'Morning'
+			 when time between '12:00:00' and '18:00:00' then 'Afternoon'
+			 else 'Evening'
+    	end)
+);
