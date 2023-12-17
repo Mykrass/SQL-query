@@ -516,3 +516,28 @@ CREATE TABLE reference
 );
 
 \COPY reference FROM '/Users/mykras/Downloads/bikeride.csv' DELIMITER ',' CSV HEADER;
+
+
+DROP TABLE WMsales;
+CREATE TABLE WMsales
+  ( 
+    invoice_id text Not null primary Key,
+	  branch text not null,
+    city text not null,
+    customer_type text not null,
+    gender  text not null,
+    product_line text not null,
+    unit_price  float not null,
+    quantity int not null,
+    VAT float not null,
+    total float not null,
+    date timestamp without time zone,
+    time timestamp without time zone,
+    payment_method text  not null,
+    cogs  decimal float not null,
+    gross_margin_pct float,
+    gross_income float not null,
+    rating float
+);
+
+\COPY reference FROM '/Users/mykras/Downloads/WalmartSalesData.csv' DELIMITER ',' CSV HEADER;
