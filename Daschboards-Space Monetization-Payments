@@ -1,3 +1,8 @@
+/*
+/*
+SQL Report - Space Monetization - Payments
+*/
+
 select sum(sub.payments_num) as "Payments" from
 (select  count(paymentid) as payments_num
 from p102968.payments p
