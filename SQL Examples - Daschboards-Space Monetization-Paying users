@@ -1,3 +1,7 @@
+/*
+/*
+SQL Report - Space Monetization - Paying users
+*/
 
 select sum(users) as "Paying users" from
 (select count( distinct (devtodevid)) as users
