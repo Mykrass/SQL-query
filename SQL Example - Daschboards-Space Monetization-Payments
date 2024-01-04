@@ -1,6 +1,7 @@
 /*
 /*
 SQL Report - Space Monetization - Payments
+https://demo-analytics.devtodev.com/space/2628/dashboard/master/111
 */
 
 select sum(sub.payments_num) as "Payments" from
