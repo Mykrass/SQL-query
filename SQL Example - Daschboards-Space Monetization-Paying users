@@ -1,6 +1,7 @@
 /*
 /*
 SQL Report - Space Monetization - Paying users
+https://demo-analytics.devtodev.com/space/2628/dashboard/master/111
 */
 
 select sum(users) as "Paying users" from
