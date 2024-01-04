@@ -1,6 +1,7 @@
 /*
 /*
 SQL Report - Space Monetization - New users
+https://demo-analytics.devtodev.com/space/2628/dashboard/master/111
 */
 
 select sum(new_users) as "New users" from 
