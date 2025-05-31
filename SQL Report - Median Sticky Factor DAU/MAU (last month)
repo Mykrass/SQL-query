@@ -1,6 +1,7 @@
 /*
 /*
-SQL Report - Median Sticky Factor DAU/MAU (last month)
+SQL Report for 3 in a row.Android
+Dashboards - Median Sticky Factor DAU
 */
 
 select d.days as "Days"
