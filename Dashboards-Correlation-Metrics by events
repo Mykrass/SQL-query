@@ -1,44 +1,33 @@
-----Dashboards-Correlation-Top events
-declare
-@days_interval interval = '14 day';
+/*
+/*
+SQL Report for 3 in a row.Android
+Dashboards - Metrics by events
+https://demo-analytics.devtodev.com/space/2628/reports/sql/master/14050/?type=dash
+*/
 
-with t1 as(
-  select name
-  ,count(distinct devtodevid) as users
-  ,count(eventtime) as events
-  from p102968.custom_events  
-  --where eventtime >= @period.from 
-  --and created >= @period.from and created < @period.to
-  where created >= current_date - @days_interval and created < current_date
-  group by 1
-  order by 2 desc
-)
-
-select * from t1;
 declare 
---@start_date date = '2022-10-01',
---@finish_date date = '2022-10-30'
-@days_interval interval = '14 day',
---@events text = 'daily bonus', --daily task
-@events text[] = ARRAY['daily bonus', 'daily task', 'help to friend', 'joined the clan', 'starterpack popup', 'friend helped', 'shop open', 'rewarded video'];
+@start_date date = '2025-05-22',
+@finish_date date = '2025-05-28',
+--@days_interval interval = '7 day',
+@events_count int = 2,
+@events text[] = ARRAY['Empty', 'daily bonus', 'daily task', 'help to friend', 'joined the clan', 
+                        'starterpack popup', 'friend helped', 'shop open', 'rewarded video'];
 
 with us as (select distinct devtodevid, min(eventtime) as d1, name , count(eventtime)
   from p102968.custom_events e 
   where name = any(@events)
-  --where name = @events
   --and eventtime >= @period.from
-  --and created >= @period.from and created < @period.to
-  and created >= current_date - @days_interval and created < current_date
+  and eventtime >= @start_date
   group by 1, 3
-  --having count(eventtime) >= @events_count
+  having count(eventtime) >= @events_count
   )
 
 , r1 as (select distinct u.devtodevid, created, u.firstpaymentdate, lasttime, us.d1
-, us.name, (lasttime-created)/interval '1 day' as diff
+, us.name , (lasttime-created)/interval '1 day' as diff
 from p102968.users u
   join us on u.devtodevid = us.devtodevid and u.lasttime >=  us.d1 
 --where created >= @period.from and created < @period.to)
-where created >= current_date - @days_interval and created < current_date)
+where created between @start_date and @finish_date)
 
 select name, count(distinct r1.d1) as "performed event"
 , round(count(r1.d1) filter (where diff >= 1) / count(distinct r1.d1)::numeric *100 ,2) as "returned, %"
