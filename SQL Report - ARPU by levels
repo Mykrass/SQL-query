@@ -3,9 +3,13 @@
 SQL Report - ARPU by levels
 */
 
+declare 
+@start_date date = '2025-04-01',
+@finish_date date = '2025-05-01';
+
 with user_data as (
     select devtodevid
-    from p106255.users
+    from p104704.users
     where not tester 
     and not cheater
     and country not in ('UA')
@@ -14,10 +18,10 @@ with user_data as (
   arpu as (
   select level as "Level"
       , round(sum(priceusd)/count(distinct devtodevid), 2) as "ARPPU"
-      --, to_char(sum(p.priceusd)/count(distinct devtodevid), '$999,999,999,999.00') as "ARPPU"
-      --, '$'||round((sum(p.priceusd)/count(distinct devtodevid))::numeric,2)|| ' per paying user' as "ARPPU"
+      --, to_char(sum(priceusd)/count(distinct devtodevid), '$999,999,999,999.00') as "ARPPU"
+      --, '$'||round((sum(priceusd)/count(distinct devtodevid))::numeric,2)|| ' per paying user' as "ARPPU"
   from user_data
-  join p106255.payments
+  join p104704.payments
   using (devtodevid)
   where eventtime between @start_date and @finish_date
   group by 1
