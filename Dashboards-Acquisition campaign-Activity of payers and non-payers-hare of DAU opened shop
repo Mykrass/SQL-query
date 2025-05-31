@@ -1,7 +1,21 @@
 /*
 /*
-SQL Report for 3 in row - Share of DAU opened shop
+SQL Report for 3 in a row.Android
+Dashboards - Share of DAU opened shop
 */
+
+select d.days as "Days"
+, round(d.dau*100/m.mau, 2) as "% Sticky Factor"
+from (select to_char(eventtime, 'yyyy-mm-dd') days, count(distinct devtodevid) as dau
+      from p104704.sessions
+      where eventtime>=current_date - interval '1 month' and eventtime < current_date
+      group by 1
+     ) d cross join
+     (select count(distinct devtodevid) as mau
+      from p104704.sessions
+      where eventtime>=current_date - interval '1 month' and eventtime < current_date
+     ) m
+order by 1
 
 declare 
 @days_interval interval = '14 day';
