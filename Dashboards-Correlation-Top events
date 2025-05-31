@@ -1,11 +1,12 @@
 --Dashboards-Correlation-Top events
+
 declare
 @days_interval interval = '14 day';
 
 with t1 as(
   select name
-  ,count(distinct devtodevid) as users
   ,count(eventtime) as events
+  ,count(distinct devtodevid) as users
   from p102968.custom_events  
   --where eventtime >= @period.from 
   --and created >= @period.from and created < @period.to
@@ -14,4 +15,5 @@ with t1 as(
   order by 2 desc
 )
 
-select * from t1;
+select * from t1
+order by 2 desc;
