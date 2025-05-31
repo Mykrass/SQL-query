@@ -6,12 +6,12 @@ SQL Report - Median Sticky Factor DAU/MAU (last month)
 select d.days as "Days"
 , round(d.dau*100/m.mau, 2) as "% Sticky Factor"
 from (select to_char(eventtime, 'yyyy-mm-dd') days, count(distinct devtodevid) as dau
-      from p106255.sessions
+      from p104704.sessions
       where eventtime>=current_date - interval '1 month' and eventtime < current_date
       group by 1
      ) d cross join
      (select count(distinct devtodevid) as mau
-      from p106255.sessions
+      from p104704.sessions
       where eventtime>=current_date - interval '1 month' and eventtime < current_date
      ) m
 order by 1
