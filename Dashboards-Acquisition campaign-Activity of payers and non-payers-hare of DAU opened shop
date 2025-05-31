@@ -1,21 +1,8 @@
 /*
 /*
 SQL Report for 3 in a row.Android
-Dashboards - Share of DAU opened shop
+Dashboards - Update Dashboards- Acquisition campaign-Activity of payers and non-payers-hare of DAU opened shop
 */
-
-select d.days as "Days"
-, round(d.dau*100/m.mau, 2) as "% Sticky Factor"
-from (select to_char(eventtime, 'yyyy-mm-dd') days, count(distinct devtodevid) as dau
-      from p104704.sessions
-      where eventtime>=current_date - interval '1 month' and eventtime < current_date
-      group by 1
-     ) d cross join
-     (select count(distinct devtodevid) as mau
-      from p104704.sessions
-      where eventtime>=current_date - interval '1 month' and eventtime < current_date
-     ) m
-order by 1
 
 declare 
 @days_interval interval = '14 day';
@@ -28,7 +15,7 @@ with t1 as(
   and tester is false  -- exclusion of testers
   and cheater is false  -- exclusion of cheaters
   group by 1
-  order by 1 asc
+  order by 1 asc  
 )
 
 , t2 as(
@@ -81,4 +68,5 @@ with t1 as(
   join t5 using(dt)
 )
 
-select * from t6;
+select * from t6
+order by 1 asc;
